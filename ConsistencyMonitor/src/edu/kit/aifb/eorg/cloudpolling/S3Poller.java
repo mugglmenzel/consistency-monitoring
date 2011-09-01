@@ -12,9 +12,9 @@ import java.util.TimeZone;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
+import edu.kit.aifb.eorg.connectors.S3Connector;
 import edu.kit.aifb.eorg.datacollector.client.DataCollectorService;
 import edu.kit.aifb.eorg.datacollector.client.DataCollectorServiceService;
-import edu.kit.aifb.eorg.simples3library.S3Connector;
 
 /**
  * @author David Bermbach

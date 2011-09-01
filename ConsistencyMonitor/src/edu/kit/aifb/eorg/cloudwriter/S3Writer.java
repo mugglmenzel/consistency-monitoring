@@ -3,7 +3,7 @@
  */
 package edu.kit.aifb.eorg.cloudwriter;
 
-import edu.kit.aifb.eorg.simples3library.S3Connector;
+import edu.kit.aifb.eorg.connectors.S3Connector;
 
 /**
  * @author David Bermbach
