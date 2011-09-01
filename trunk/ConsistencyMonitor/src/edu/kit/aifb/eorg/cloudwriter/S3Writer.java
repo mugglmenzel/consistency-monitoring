@@ -19,9 +19,8 @@ public class S3Writer extends AbstractWriter {
 
 	@Override
 	protected void configure(String[] args) throws Exception {
-		if (args.length < 6 || args[0] == null || args[1] == null
-				|| args[2] == null || args[3] == null || args[4] == null
-				|| args[5] == null) {
+		if (args.length < 3 || args[0] == null || args[1] == null
+				|| args[2] == null ) {
 			log.error("Missing parameters: bucket name, aws access key, aws secret access key");
 			throw new Exception(
 					"Missing parameters: bucket name, aws access key, aws secret access key");
