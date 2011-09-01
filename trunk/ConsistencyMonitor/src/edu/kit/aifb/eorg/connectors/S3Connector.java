@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.kit.aifb.eorg.simples3library;
+package edu.kit.aifb.eorg.connectors;
 
 import com.amazon.s3.AWSAuthConnection;
 import com.amazon.s3.S3Object;
