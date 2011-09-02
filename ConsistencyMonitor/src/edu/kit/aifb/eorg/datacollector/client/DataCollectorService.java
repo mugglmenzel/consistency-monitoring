@@ -35,7 +35,7 @@ public interface DataCollectorService {
         @WebParam(name = "senderIdentifier", targetNamespace = "")
         String senderIdentifier,
         @WebParam(name = "durationInMillis", targetNamespace = "")
-        int durationInMillis,
+        long durationInMillis,
         @WebParam(name = "testrunID", targetNamespace = "")
         String testrunID);
 

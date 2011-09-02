@@ -3,8 +3,6 @@ package edu.kit.aifb.eorg.datacollector;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Arrays;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
@@ -45,7 +43,7 @@ public class DataCollector {
 	}
 
 	public synchronized void writeData(String senderIdentifier,
-			int durationInMillis, String testrunID) {
+			long durationInMillis, String testrunID) {
 		String prefix = "\"", suffix = "\";";
 		try {
 			file.writeBytes(prefix + senderIdentifier + suffix + prefix

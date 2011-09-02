@@ -46,12 +46,14 @@ public class CassandraConnector {
 	 * Initialize any state for this DB. Called once per DB instance; there is
 	 * one DB instance per client thread.
 	 */
-	public static void init(String hosts, ConsistencyLevel consistencyLevel)
+	public static void init(String hosts, ConsistencyLevel consistencyLvl)
 			throws Exception {
 		if (hosts == null) {
 			throw new Exception(
 					"Required property \"hosts\" missing for CassandraClient");
 		}
+		
+		consistencyLevel = consistencyLvl;
 
 		// System.out.println("Consistency Level: " + consistencyLevel.name());
 		ConnectionRetries = Integer.parseInt(CONNECTION_RETRY_PROPERTY_DEFAULT);
