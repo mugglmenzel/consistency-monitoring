@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
 public class PublishData {
 
     protected String senderIdentifier;
-    protected int durationInMillis;
+    protected long durationInMillis;
     protected String testrunID;
 
     /**
@@ -67,7 +67,7 @@ public class PublishData {
      * Gets the value of the durationInMillis property.
      * 
      */
-    public int getDurationInMillis() {
+    public long getDurationInMillis() {
         return durationInMillis;
     }
 
@@ -75,7 +75,7 @@ public class PublishData {
      * Sets the value of the durationInMillis property.
      * 
      */
-    public void setDurationInMillis(int value) {
+    public void setDurationInMillis(long value) {
         this.durationInMillis = value;
     }
 

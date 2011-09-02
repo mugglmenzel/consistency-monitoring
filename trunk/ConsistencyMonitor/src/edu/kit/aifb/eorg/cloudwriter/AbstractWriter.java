@@ -13,7 +13,6 @@ import org.apache.log4j.PropertyConfigurator;
 
 import edu.kit.aifb.eorg.datacollector.client.DataCollectorService;
 import edu.kit.aifb.eorg.datacollector.client.DataCollectorServiceService;
-import edu.kit.aifb.eorg.mini.MiniClient;
 
 /**
  * abstract writer superclass. writes a timestamp plus version number to the
@@ -25,7 +24,7 @@ import edu.kit.aifb.eorg.mini.MiniClient;
  */
 public abstract class AbstractWriter {
 
-	protected static final Logger log = Logger.getLogger(MiniWriter.class);
+	protected static final Logger log = Logger.getLogger(AbstractWriter.class);
 
 	private static String datacollectoraddress;
 	private static DataCollectorService datacollector;
@@ -87,7 +86,6 @@ public abstract class AbstractWriter {
 		}
 		// initialization complete
 		Calendar start, end;
-		MiniClient mc = new MiniClient();
 		int counter = 0;
 		while (true) {
 			try {
@@ -105,7 +103,7 @@ public abstract class AbstractWriter {
 						+ (end.getTimeInMillis() - start.getTimeInMillis())
 						+ "ms\n");
 				datacollector
-						.publishData(senderIdentifier, (int) (end
+						.publishData(senderIdentifier, (end
 								.getTimeInMillis() - start.getTimeInMillis()),
 								"" + (counter - 1));
 

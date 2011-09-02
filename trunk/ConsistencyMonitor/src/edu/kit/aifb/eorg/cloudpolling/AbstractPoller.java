@@ -37,9 +37,9 @@ public abstract class AbstractPoller {
 	 * 
 	 * @param args
 	 */
-	protected abstract void configure(String[] args)throws Exception;
+	protected abstract void configure(String[] args) throws Exception;
 
-	protected static final Logger log = Logger.getLogger(MiniPoller.class);
+	protected static final Logger log = Logger.getLogger(AbstractPoller.class);
 
 	private static String datacollectoraddress;
 	private static long pollIntervalInMillis;
@@ -48,9 +48,9 @@ public abstract class AbstractPoller {
 	private static DataCollectorService datacollector;
 	private static RandomAccessFile file;
 	/** stores the latest time this timestamp was read */
-	private static HashMap<Integer, Integer> readTimestamps = new HashMap<Integer, Integer>();
+	private static HashMap<Integer, Long> readTimestamps = new HashMap<Integer, Long>();
 	/** stores the update date of a particular timestamp */
-	private static HashMap<Integer, Integer> writeTimestamps = new HashMap<Integer, Integer>();
+	private static HashMap<Integer, Long> writeTimestamps = new HashMap<Integer, Long>();
 	private static int buffersize = 10; // number of buffered versions in
 										// "durations"
 
@@ -83,10 +83,11 @@ public abstract class AbstractPoller {
 					+ "ms\nStart Time:"
 					+ Calendar.getInstance(TimeZone.getTimeZone("UTC"))
 					+ "\nData format: Time in millis: File content on monitored storage system\n");
-			String [] argsnew=null;
+			String[] argsnew = null;
 			if (args.length > 4) {
 				argsnew = new String[args.length - 4];
-				for(int i = 4; i< args.length;i++)argsnew[i-4]=args[i];
+				for (int i = 4; i < args.length; i++)
+					argsnew[i - 4] = args[i];
 			}
 			this.configure(argsnew);
 
@@ -116,9 +117,9 @@ public abstract class AbstractPoller {
 				// where version n was read to the write timestamp of
 				// version n+1
 				// first store read timestamp
-				readTimestamps.put(version, (int) start.getTimeInMillis());
+				readTimestamps.put(version, start.getTimeInMillis());
 				// second store write timestamp
-				writeTimestamps.put(version, (int) date);
+				writeTimestamps.put(version, date);
 
 				// check whether buffersize is violated
 				while (readTimestamps.size() > buffersize) {
@@ -129,9 +130,10 @@ public abstract class AbstractPoller {
 						if (key < minKey)
 							minKey = key;
 					// take latest read time for that version
-					int readTime = readTimestamps.remove(minKey);
+					long readTime = readTimestamps.remove(minKey);
 					// take write time of following version
-					int writeTime = writeTimestamps.get(minKey + 1);
+					long writeTime = writeTimestamps.get(minKey + 1);
+					writeTimestamps.remove(minKey-5);
 					// publish in timestamps of the last read of n and the
 					// write time of n+1
 					datacollector.publishData(senderIdentifier, readTime

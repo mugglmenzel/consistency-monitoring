@@ -18,7 +18,7 @@ public class DataCollectorService {
 	@WebMethod
 	public void publishData(
 			@WebParam(name = "senderIdentifier") String senderIdentifier,
-			@WebParam(name = "durationInMillis") int durationInMillis,
+			@WebParam(name = "durationInMillis") long durationInMillis,
 			@WebParam(name = "testrunID") String testrunID) {
 		DataCollector d = DataCollector.getInstance();
 		d.writeData(senderIdentifier, durationInMillis, testrunID);
