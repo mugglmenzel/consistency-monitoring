@@ -8,8 +8,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.kit.aifb.eorg.cloudpolling.CassandraPoller;
 import edu.kit.aifb.eorg.cloudpolling.MiniPoller;
 import edu.kit.aifb.eorg.cloudpolling.S3Poller;
+import edu.kit.aifb.eorg.cloudwriter.CassandraWriter;
 import edu.kit.aifb.eorg.cloudwriter.MiniWriter;
 import edu.kit.aifb.eorg.cloudwriter.S3Writer;
 import edu.kit.aifb.eorg.datacollector.CollectorStarter;
@@ -43,6 +45,8 @@ public class ExtendedStarter {
 	private static String collectorurl;
 	private static long start;
 	private static String miniport;
+	private static String cassandraHosts;
+	private static String cassandraConsistencyLevel;
 
 	/**
 	 * @param args
@@ -79,6 +83,10 @@ public class ExtendedStarter {
 		writeinterval = Long.parseLong(line.substring(line.indexOf(":") + 1));
 		line = config.remove(0);
 		collectorurl = line.substring(line.indexOf(":") + 1);
+		line = config.remove(0);
+		cassandraHosts = line.substring(line.indexOf(":") + 1);
+		line = config.remove(0);
+		cassandraConsistencyLevel = line.substring(line.indexOf(":") + 1);
 		String[] params;
 		while (config.size() > 0) {
 			line = config.remove(0);
@@ -160,6 +168,21 @@ public class ExtendedStarter {
 						MiniWriter writer = new MiniWriter();
 						writer.runWriter(params);
 						return;
+					} else if (line.equals("cassandrawriter")) {
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						start = Long.parseLong(line);
+						params = new String[6];
+						params[0] = collectorurl;
+						params[1] = "" + writeinterval;
+						params[2] = filename;
+						params[3] = "Write Duration";
+						params[4] = cassandraHosts;
+						params[5] = cassandraConsistencyLevel;
+						countdown(start);
+						CassandraWriter writer = new CassandraWriter();
+						writer.runWriter(params);
+						return;
 					} else if (line.equals("minimonitor")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
@@ -193,6 +216,21 @@ public class ExtendedStarter {
 						params[6] = awsprivate;
 						countdown(start);
 						S3Poller poller = new S3Poller();
+						poller.runPoller(params);
+						return;
+					} else if (line.equals("cassandrapoller")) {
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						start = Long.parseLong(line);
+						params = new String[6];
+						params[0] = collectorurl;
+						params[1] = "" + pollinterval;
+						params[2] = filename;
+						params[3] = id;
+						params[4] = cassandraHosts;
+						params[5] = cassandraConsistencyLevel;
+						countdown(start);
+						CassandraPoller poller = new CassandraPoller();
 						poller.runPoller(params);
 						return;
 					} else {
@@ -234,15 +272,15 @@ public class ExtendedStarter {
 
 	private static void countdown(long duration) throws Exception {
 		System.out.println("Starting in " + duration + " second(s).");
-		while(duration>10){
-			//sleep 10 seconds
-			duration -=10;
+		while (duration > 10) {
+			// sleep 10 seconds
+			duration -= 10;
 			Thread.sleep(10000);
-			System.out.println("Starting in "+duration+" second(s).");
+			System.out.println("Starting in " + duration + " second(s).");
 		}
-		Thread.sleep(duration*1000);
+		Thread.sleep(duration * 1000);
 		System.out.println("Starting now!");
-		
+
 	}
 
 }
