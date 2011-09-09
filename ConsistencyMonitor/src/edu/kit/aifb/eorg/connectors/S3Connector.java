@@ -16,17 +16,14 @@ import com.amazon.s3.S3Object;
  */
 public final class S3Connector {
 
-	private static String bucket;
 	private static AWSAuthConnection aws;
 
-	public final static void doInitialize(String bucketname, String secretkey,
+	public final static void doInitialize(String secretkey,
 			String publickey) throws Exception {
-		bucket = bucketname;
-
-		aws = new AWSAuthConnection(publickey, secretkey);
+				aws = new AWSAuthConnection(publickey, secretkey);
 	}
 
-	public final static void writeToS3(final String key, final String value) {
+	public final static void writeToS3(final String bucket, final String key, final String value) {
 		try {
 			S3Object obj = new S3Object(value.getBytes(), null);
 			System.out.println(aws.put(bucket, key, obj, null).connection
@@ -38,7 +35,7 @@ public final class S3Connector {
 		}
 	}
 
-	public final static String readFromS3(final String key) {
+	public final static String readFromS3(final String bucket, final String key) {
 		try {
 			return new String(aws.get(bucket, key, null).object.data);
 		} catch (Exception e) {
