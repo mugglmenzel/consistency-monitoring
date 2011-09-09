@@ -3,7 +3,6 @@
  */
 package edu.kit.aifb.eorg.mini;
 
-import java.io.FileNotFoundException;
 
 /**
  * @author David Bermbach
