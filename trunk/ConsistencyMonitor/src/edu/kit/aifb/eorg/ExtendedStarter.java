@@ -10,9 +10,11 @@ import java.util.List;
 
 import edu.kit.aifb.eorg.cloudpolling.CassandraPoller;
 import edu.kit.aifb.eorg.cloudpolling.MiniPoller;
+import edu.kit.aifb.eorg.cloudpolling.S3MultiFilePoller;
 import edu.kit.aifb.eorg.cloudpolling.S3Poller;
 import edu.kit.aifb.eorg.cloudwriter.CassandraWriter;
 import edu.kit.aifb.eorg.cloudwriter.MiniWriter;
+import edu.kit.aifb.eorg.cloudwriter.S3MultiFileWriter;
 import edu.kit.aifb.eorg.cloudwriter.S3Writer;
 import edu.kit.aifb.eorg.datacollector.CollectorStarter;
 import edu.kit.aifb.eorg.mini.LogEngine;
@@ -96,7 +98,7 @@ public class ExtendedStarter {
 					// found our template
 					line = config.remove(0);
 					line = line.substring(line.indexOf(":") + 1);
-					if (line.equals("collector")) {
+					if (line.equalsIgnoreCase("collector")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
@@ -111,7 +113,7 @@ public class ExtendedStarter {
 						countdown(start);
 						CollectorStarter.main(params);
 						return;
-					} else if (line.equals("ministorage")) {
+					} else if (line.equalsIgnoreCase("ministorage")) {
 						LogEngine.createInstance("output.csv");
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
@@ -133,7 +135,7 @@ public class ExtendedStarter {
 						countdown(start);
 						Starter.main(params);
 						return;
-					} else if (line.equals("s3writer")) {
+					} else if (line.equalsIgnoreCase("s3writer")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
@@ -149,7 +151,31 @@ public class ExtendedStarter {
 						S3Writer writer = new S3Writer();
 						writer.runWriter(params);
 						return;
-					} else if (line.equals("miniwriter")) {
+					} else if (line.equalsIgnoreCase("s3multifilewriter")) {
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						String alternateBucket = line;
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						String alternateFile = line;
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						start = Long.parseLong(line);
+						params = new String[9];
+						params[0] = collectorurl;
+						params[1] = "" + writeinterval;
+						params[2] = filename;
+						params[3] = "Write Duration";
+						params[4] = bucketname;
+						params[5] = awspublic;
+						params[6] = awsprivate;
+						params[7] = alternateBucket;
+						params[8] = alternateFile;
+						countdown(start);
+						S3MultiFileWriter writer = new S3MultiFileWriter();
+						writer.runWriter(params);
+						return;
+					} else if (line.equalsIgnoreCase("miniwriter")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
@@ -168,7 +194,7 @@ public class ExtendedStarter {
 						MiniWriter writer = new MiniWriter();
 						writer.runWriter(params);
 						return;
-					} else if (line.equals("cassandrawriter")) {
+					} else if (line.equalsIgnoreCase("cassandrawriter")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
@@ -183,7 +209,7 @@ public class ExtendedStarter {
 						CassandraWriter writer = new CassandraWriter();
 						writer.runWriter(params);
 						return;
-					} else if (line.equals("minimonitor")) {
+					} else if (line.equalsIgnoreCase("minimonitor")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
@@ -202,7 +228,7 @@ public class ExtendedStarter {
 						MiniPoller poller = new MiniPoller();
 						poller.runPoller(params);
 						return;
-					} else if (line.equals("s3poller")) {
+					} else if (line.equalsIgnoreCase("s3poller")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
@@ -218,7 +244,35 @@ public class ExtendedStarter {
 						S3Poller poller = new S3Poller();
 						poller.runPoller(params);
 						return;
-					} else if (line.equals("cassandrapoller")) {
+					} else if (line.equalsIgnoreCase("s3multifilepoller")) {
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						boolean useStandardFile = Boolean.parseBoolean(line);
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						String alternateBucket = line;
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						String alternateFile = line;
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						start = Long.parseLong(line);
+						params = new String[10];
+						params[0] = collectorurl;
+						params[1] = "" + pollinterval;
+						params[2] = filename;
+						params[3] = id;
+						params[4] = bucketname;
+						params[5] = awspublic;
+						params[6] = awsprivate;
+						params[7] = "" + useStandardFile;
+						params[8] = alternateBucket;
+						params[9] = alternateFile;
+						countdown(start);
+						S3MultiFilePoller poller = new S3MultiFilePoller();
+						poller.runPoller(params);
+						return;
+					} else if (line.equalsIgnoreCase("cassandrapoller")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
@@ -241,7 +295,6 @@ public class ExtendedStarter {
 					continue;
 			}
 		}
-
 	}
 
 	private static List<String> readConfigFile(String configUrl)

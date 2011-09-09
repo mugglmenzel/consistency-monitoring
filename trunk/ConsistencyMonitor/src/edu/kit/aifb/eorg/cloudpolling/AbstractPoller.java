@@ -43,7 +43,7 @@ public abstract class AbstractPoller {
 
 	private static String datacollectoraddress;
 	private static long pollIntervalInMillis;
-	private static String filename;
+	protected static String filename;
 	private static String senderIdentifier;
 	private static DataCollectorService datacollector;
 	private static RandomAccessFile file;

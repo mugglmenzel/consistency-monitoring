@@ -12,10 +12,11 @@ import edu.kit.aifb.eorg.connectors.S3Connector;
  */
 public class S3Poller extends AbstractPoller {
 
+	private String bucket;
 	
 	@Override
 	protected String readFromCloud(String key) {
-		return S3Connector.readFromS3(key);
+		return S3Connector.readFromS3(bucket,key);
 	}
 
 	@Override
@@ -25,6 +26,7 @@ public class S3Poller extends AbstractPoller {
 			log.error("Missing parameters: bucket name, aws access key, aws secret access key");
 			throw new Exception("Missing parameters: bucket name, aws access key, aws secret access key");
 		}
-		S3Connector.doInitialize(args[0], args[2], args[1]);
+		bucket = args[0];
+		S3Connector.doInitialize(args[2], args[1]);
 	}
 }
