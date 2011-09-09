@@ -3,18 +3,7 @@
  */
 package edu.kit.aifb.eorg.cloudpolling;
 
-import java.io.RandomAccessFile;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.TimeZone;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
 import edu.kit.aifb.eorg.connectors.S3Connector;
-import edu.kit.aifb.eorg.datacollector.client.DataCollectorService;
-import edu.kit.aifb.eorg.datacollector.client.DataCollectorServiceService;
 
 /**
  * @author David Bermbach
