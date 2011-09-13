@@ -39,8 +39,10 @@ public class CassandraConnector {
 	public static final String CONSISTENCY_LEVEL = "cassandra.consistencylevel";
 	public static final ConsistencyLevel CONSISTENCY_LEVEL_DEFAULT = ConsistencyLevel.ONE;
 
+	static String[] hostList;
+	
 	static TTransport tr;
-	static Cassandra.Client client;
+	
 
 	/**
 	 * Initialize any state for this DB. Called once per DB instance; there is
@@ -59,12 +61,18 @@ public class CassandraConnector {
 		ConnectionRetries = Integer.parseInt(CONNECTION_RETRY_PROPERTY_DEFAULT);
 		OperationRetries = Integer.parseInt(OPERATION_RETRY_PROPERTY_DEFAULT);
 
-		String[] allhosts = hosts.split(",");
-		String myhost = allhosts[random.nextInt(allhosts.length)];
+		hostList = hosts.split(",");
+	}
+
+	
+	static Cassandra.Client getClient() throws Exception {
+		
+		String myhost = hostList[random.nextInt(hostList.length)];
 		// System.out.println("Host: ["+myhost+"]");
 		// System.exit(0);
 
 		Exception connectexception = null;
+		Cassandra.Client client = null;
 
 		for (int retry = 0; retry < ConnectionRetries; retry++) {
 			tr = new TSocket(myhost, 9160);
@@ -88,8 +96,10 @@ public class CassandraConnector {
 					+ ConnectionRetries + " tries");
 			throw new Exception(connectexception);
 		}
+		
+		return client;
 	}
-
+	
 	/**
 	 * Cleanup any state for this DB. Called once per DB instance; there is one
 	 * DB instance per client thread.
@@ -118,6 +128,8 @@ public class CassandraConnector {
 
 		try {
 
+			Cassandra.Client client = getClient();
+			
 			SlicePredicate predicate;
 			if (fields == null) {
 
@@ -186,6 +198,8 @@ public class CassandraConnector {
 			batch_mutation.put("data", v);
 
 			try {
+				Cassandra.Client client = getClient();
+				
 				for (String field : values.keySet()) {
 					String val = values.get(field);
 					Column col = new Column(field.getBytes("UTF-8"),
