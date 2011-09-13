@@ -38,7 +38,7 @@ public class CassandraPoller extends AbstractPoller {
 	protected String readFromCloud(String key) {
 		//TODO: table name in cassandra DB
 		result.clear();
-		CassandraConnector.read("table", key, fields, result);
+		CassandraConnector.read("usertable", key, fields, result);
 		
 		return result.get("timestamp");
 	}

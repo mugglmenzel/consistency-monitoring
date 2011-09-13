@@ -24,7 +24,7 @@ public class CassandraWriter extends AbstractWriter {
 		//TODO: table name in cassandra DB
 		Map<String, String> values = new HashMap<String, String>();
 		values.put("timestamp", value);
-		CassandraConnector.insert("table", key, values);
+		CassandraConnector.insert("usertable", key, values);
 
 	}
 
