@@ -136,8 +136,8 @@ public abstract class AbstractPoller {
 					writeTimestamps.remove(minKey-5);
 					// publish in timestamps of the last read of n and the
 					// write time of n+1
-					datacollector.publishData(senderIdentifier, readTime
-							- writeTime, "" + (minKey + 1));
+					datacollector.publishData(senderIdentifier, Math.max(readTime
+							- writeTime,0), "" + (minKey + 1));
 
 					// done repeat until buffersize is no longer violated
 				}
