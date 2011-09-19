@@ -22,7 +22,7 @@ import java.io.FileReader;
 public class ReaderLogAnalyzer {
 
 	/** log file that shall be analyzed */
-	private final static File logfile = new File("c:/temp/mon11.csv");
+	private final static File logfile = new File("c:/temp/mon12.csv");
 
 	/**
 	 * @param args

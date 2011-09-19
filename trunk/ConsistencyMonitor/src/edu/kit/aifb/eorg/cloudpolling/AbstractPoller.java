@@ -97,14 +97,18 @@ public abstract class AbstractPoller {
 		}
 		System.out.println("Initialization complete, starting polling.");
 		// initialization complete
-		Calendar start;
+		Calendar start, end;
 		while (true) {
 			try {
 				Thread.sleep(pollIntervalInMillis);
 				// create Date object and then poll
 				start = Calendar.getInstance();
 				String data = readFromCloud(filename);
-				file.writeBytes(start.getTimeInMillis() + ":" + data + "\n");
+				end = Calendar.getInstance();
+				file.writeBytes(start.getTimeInMillis() + ":" + data
+						+ " latency:"
+						+ (end.getTimeInMillis() - start.getTimeInMillis())
+						+ "\n");
 				if (data == null)
 					continue;
 				String[] temp = data.split("\\s");
@@ -133,11 +137,12 @@ public abstract class AbstractPoller {
 					long readTime = readTimestamps.remove(minKey);
 					// take write time of following version
 					long writeTime = writeTimestamps.get(minKey + 1);
-					writeTimestamps.remove(minKey-5);
+					writeTimestamps.remove(minKey - 5);
 					// publish in timestamps of the last read of n and the
 					// write time of n+1
-					datacollector.publishData(senderIdentifier, Math.max(readTime
-							- writeTime,0), "" + (minKey + 1));
+					datacollector.publishData(senderIdentifier,
+							Math.max(readTime - writeTime, 0), ""
+									+ (minKey + 1));
 
 					// done repeat until buffersize is no longer violated
 				}
