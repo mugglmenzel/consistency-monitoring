@@ -29,14 +29,14 @@ import java.util.TreeSet;
 public class ReaderLogAnalyzer {
 
 	/** For old log files without latencies set to true */
-	private final static boolean useOldFormat = true;
+	private final static boolean useOldFormat = false;
 
 	/** list of log files */
-	private final static String[] logfiles = { "c:/temp/mon01.csv",
+	private final static String[] logfiles = { /*"c:/temp/mon01.csv",
 			"c:/temp/mon02.csv", "c:/temp/mon03.csv", "c:/temp/mon04.csv",
 			"c:/temp/mon05.csv", "c:/temp/mon06.csv", "c:/temp/mon07.csv",
 			"c:/temp/mon08.csv", "c:/temp/mon09.csv", "c:/temp/mon10.csv",
-			"c:/temp/mon11.csv", "c:/temp/mon12.csv" };
+			"c:/temp/mon11.csv", "c:/temp/mon12.csv"*/"c:/temp/poller.csv" };
 
 	/** all latencies are written to this file */
 	private final static File latencyOutFile = new File("c:/temp/latencies.txt");
@@ -54,7 +54,7 @@ public class ReaderLogAnalyzer {
 	 * interval size in ms used to calculate the probability of reading an old
 	 * version based on time elapsed since update
 	 */
-	private final static int intervalSize = 20;
+	private final static int intervalSize = 5;
 	private final static TreeMap<Long, Long> consistentReads = new TreeMap<Long, Long>();
 	private final static TreeMap<Long, Long> staleReads = new TreeMap<Long, Long>();
 	private final static HashMap<Long, Long> writeTimestamps = new HashMap<Long, Long>();
@@ -70,7 +70,7 @@ public class ReaderLogAnalyzer {
 		else {
 			analyzeNewLogs();
 		}
-
+		System.out.println("Analysis completed.");
 	}
 
 	private static void getWriteTimestamps() throws Exception {
@@ -104,6 +104,7 @@ public class ReaderLogAnalyzer {
 	}
 
 	private static void analyzeNewLogs() throws Exception {
+		PrintWriter latencyPrinter = new PrintWriter(latencyOutFile);
 		ArrayList<String> lines = new ArrayList<String>();
 		lines.add("Log_ID Reads Errors Violations");
 		for (String file : logfiles) {
@@ -117,7 +118,7 @@ public class ReaderLogAnalyzer {
 			int pos = 0, pos2 = 0;
 			int counter = 1;
 			long version = -1, oldversion = -1;
-			long errors = 0, nonMonotonicReads = 0, diff = 0;
+			long errors = 0, nonMonotonicReads = 0, diff = 0, latency;
 			long readTimestamp = 0;
 			Long latestWriteTimestamp = null, latestVersion = null, oldval = null, timestamp = null;
 			while (line != null) {
@@ -128,6 +129,14 @@ public class ReaderLogAnalyzer {
 					pos2 = line.indexOf(" ");
 					version = Long.parseLong(line.substring(pos + 1, pos2));
 					readTimestamp = Long.parseLong(line.substring(0, pos));
+					line = line.substring(pos2);
+					pos = line.indexOf(":");
+					if(pos==-1){
+						System.out.println("The log file does not contain latencies. Use old mode instead. Terminating evaluation.");
+						return;
+					}
+					latency = Long.parseLong(line.substring(pos+1).trim());
+					latencyPrinter.println(latency);
 					// System.out.println(line + " ->"+ readTimestamp +
 					// ": "+version+" "+ writeTimestamp);
 					latestWriteTimestamp = null;
@@ -227,6 +236,7 @@ public class ReaderLogAnalyzer {
 			pw.println(print);
 			lastinterval = l;
 		}
+		latencyPrinter.close();
 	}
 
 	private static void analyzeOldLog() throws Exception {
