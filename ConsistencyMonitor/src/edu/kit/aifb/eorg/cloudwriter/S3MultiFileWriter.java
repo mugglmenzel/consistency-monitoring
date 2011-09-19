@@ -113,7 +113,7 @@ public class S3MultiFileWriter extends AbstractWriter {
 						+ "\n");
 				file.writeBytes(end.getTime() + ": finished writing after "
 						+ (end.getTimeInMillis() - start.getTimeInMillis())
-						+ "ms and"
+						+ "ms and "
 						+ (end2.getTimeInMillis() - end.getTimeInMillis())
 						+ "ms\n");
 				datacollector.publishData(
