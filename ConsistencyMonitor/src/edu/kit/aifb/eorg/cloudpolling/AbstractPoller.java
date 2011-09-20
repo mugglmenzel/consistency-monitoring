@@ -30,14 +30,14 @@ public abstract class AbstractPoller {
 	 * @param key
 	 * @return null if an error occurs. May never throw an exception.
 	 */
-	protected abstract String readFromCloud(String key);
+	public abstract String readFromCloud(String key);
 
 	/**
 	 * receives configuration parameters from the ExtendedStarter class
 	 * 
 	 * @param args
 	 */
-	protected abstract void configure(String[] args) throws Exception;
+	public abstract void configure(String[] args) throws Exception;
 
 	protected static final Logger log = Logger.getLogger(AbstractPoller.class);
 

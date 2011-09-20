@@ -26,7 +26,7 @@ public class S3MultiFileWriter extends AbstractWriter {
 	private String filename2;
 
 	@Override
-	protected void writeToCloud(String key, String value) {
+	public void writeToCloud(String key, String value) {
 		throw new RuntimeException(
 				"Use Method writeToCloud(String bucket, String key, String value) instead!");
 	}
@@ -36,7 +36,7 @@ public class S3MultiFileWriter extends AbstractWriter {
 	}
 
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		if (args.length < 5 || args[0] == null || args[1] == null
 				|| args[2] == null || args[3] == null || args[4] == null) {
 			log.error("Missing parameters: bucket name, aws access key,"

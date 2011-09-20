@@ -19,7 +19,7 @@ public class MiniWriter extends AbstractWriter {
 	private static MiniClient mc = new MiniClient();
 
 	@Override
-	protected void writeToCloud(String key, String value) {
+	public void writeToCloud(String key, String value) {
 		// pick random MiniStorage replica
 		int replica = (int) (Math.random() * hosts.size());
 		mc.sendPut(key, value.getBytes(), hosts.get(replica),
@@ -27,7 +27,7 @@ public class MiniWriter extends AbstractWriter {
 	}
 
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		if (args.length < 6) {
 			log.error("Missing list of host/port pairs");
 			throw new Exception("Missing list of host/port pairs");
