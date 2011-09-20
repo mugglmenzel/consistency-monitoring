@@ -3,6 +3,8 @@
  */
 package edu.kit.aifb.eorg.loadgenerators;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import edu.kit.aifb.eorg.connectors.CassandraConnector;
  */
 public class CassandraLoadGenerator {
 
+	private RandomAccessFile outfile;
 	private Set<String> fields = new HashSet<String>();
 	private int noOfWriteThreads = 0;
 	private int noOfReadThreads = 0;
@@ -46,6 +49,7 @@ public class CassandraLoadGenerator {
 		CassandraConnector
 				.init(hosts, ConsistencyLevel.valueOf(consistencyLvl));
 		this.sizeForWrites = sizeForWrites;
+		outfile = new RandomAccessFile("loadgenerator.csv", "rw");
 		System.out.println("CassandraLoadGenerator fully configured.");
 	}
 
@@ -91,24 +95,40 @@ public class CassandraLoadGenerator {
 			}).start();
 		}
 		long oldReads = 0, oldWrites = 0;
+		double load = 0;
 		while (true) {
 			try {
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {
 			}
+
 			synchronized (reads) {
 				diff = (new Date().getTime() - readStart.getTime()) / 1000.0;
-				System.out.println("Current read load: "
-						+ ((reads - oldReads) / diff) + " req./s");
+				load = (reads - oldReads) / diff;
+				System.out.println("Current read load: " + load + " req./s");
 				oldReads = reads;
 				readStart = new Date();
 			}
+			try {
+				outfile.writeBytes(new Date() + ": Current read load: " + load
+						+ " req./s");
+			} catch (IOException e) {
+				System.out.println("Could not log read load of " + load
+						+ "req./s");
+			}
 			synchronized (writes) {
 				diff = (new Date().getTime() - writeStart.getTime()) / 1000.0;
-				System.out.println("Current write load: "
-						+ ((writes - oldWrites) / diff) + " req./s");
+				load = (writes - oldWrites) / diff;
+				System.out.println("Current write load: " + load + " req./s");
 				oldWrites = writes;
 				writeStart = new Date();
+			}
+			try {
+				outfile.writeBytes(new Date() + ": Current write load: " + load
+						+ " req./s");
+			} catch (IOException e) {
+				System.out.println("Could not log write load of " + load
+						+ "req./s");
 			}
 		}
 
