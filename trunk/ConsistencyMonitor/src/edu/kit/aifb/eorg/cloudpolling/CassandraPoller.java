@@ -35,7 +35,7 @@ public class CassandraPoller extends AbstractPoller {
 	}
 
 	@Override
-	protected String readFromCloud(String key) {
+	public String readFromCloud(String key) {
 		//TODO: table name in cassandra DB
 		result.clear();
 		CassandraConnector.read("usertable", key, fields, result);
@@ -47,7 +47,7 @@ public class CassandraPoller extends AbstractPoller {
 	 * @see edu.kit.aifb.eorg.cloudpolling.AbstractPoller#configure(java.lang.String[])
 	 */
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		CassandraConnector.init(args[0], ConsistencyLevel.valueOf(args[1]));
 	}
 

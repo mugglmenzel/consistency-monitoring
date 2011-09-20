@@ -18,12 +18,12 @@ public class S3MultiFilePoller extends AbstractPoller {
 	private String bucket;
 
 	@Override
-	protected String readFromCloud(String key) {
+	public String readFromCloud(String key) {
 		return S3Connector.readFromS3(bucket, key);
 	}
 
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		if (args.length < 6 || args[0] == null || args[1] == null
 				|| args[2] == null || args[3] == null || args[4] == null
 				|| args[5] == null) {

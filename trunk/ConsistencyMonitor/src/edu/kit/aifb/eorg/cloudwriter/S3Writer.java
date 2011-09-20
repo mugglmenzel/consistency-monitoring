@@ -15,12 +15,12 @@ public class S3Writer extends AbstractWriter {
 	private String bucket;
 
 	@Override
-	protected void writeToCloud(String key, String value) {
+	public void writeToCloud(String key, String value) {
 		S3Connector.writeToS3(bucket, key, value);
 	}
 
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		if (args.length < 3 || args[0] == null || args[1] == null
 				|| args[2] == null) {
 			log.error("Missing parameters: bucket name, aws access key, aws secret access key");

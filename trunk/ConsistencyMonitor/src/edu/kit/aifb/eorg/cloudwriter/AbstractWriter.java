@@ -39,14 +39,14 @@ public abstract class AbstractWriter {
 	 * @param key
 	 * @return null if an error occurs. May never throw an exception.
 	 */
-	protected abstract void writeToCloud(String key, String value);
+	public abstract void writeToCloud(String key, String value);
 
 	/**
 	 * receives configuration parameters from the ExtendedStarter class
 	 * 
 	 * @param args
 	 */
-	protected abstract void configure(String[] args) throws Exception;
+	public abstract void configure(String[] args) throws Exception;
 
 	/**
 	 * @param args

@@ -20,7 +20,7 @@ public class CassandraWriter extends AbstractWriter {
 	 * @see edu.kit.aifb.eorg.cloudwriter.AbstractWriter#writeToCloud(java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected void writeToCloud(String key, String value) {
+	public void writeToCloud(String key, String value) {
 		//TODO: table name in cassandra DB
 		Map<String, String> values = new HashMap<String, String>();
 		values.put("timestamp", value);
@@ -32,7 +32,7 @@ public class CassandraWriter extends AbstractWriter {
 	 * @see edu.kit.aifb.eorg.cloudwriter.AbstractWriter#configure(java.lang.String[])
 	 */
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		CassandraConnector.init(args[0], ConsistencyLevel.valueOf(args[1]));
 	}
 

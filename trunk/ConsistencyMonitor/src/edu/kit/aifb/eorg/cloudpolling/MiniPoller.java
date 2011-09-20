@@ -19,7 +19,7 @@ public class MiniPoller extends AbstractPoller {
 	private static MiniClient mc = new MiniClient();
 
 	@Override
-	protected String readFromCloud(String key) {
+	public String readFromCloud(String key) {
 		try {
 			// pick random MiniStorage replica
 			int replica = (int) (Math.random() * hosts.size());
@@ -33,7 +33,7 @@ public class MiniPoller extends AbstractPoller {
 	}
 
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		if (args.length < 2)
 			throw new Exception("Missing list of host/port pairs");
 		int counter = 0;

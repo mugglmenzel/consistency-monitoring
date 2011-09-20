@@ -15,12 +15,12 @@ public class S3Poller extends AbstractPoller {
 	private String bucket;
 	
 	@Override
-	protected String readFromCloud(String key) {
+	public String readFromCloud(String key) {
 		return S3Connector.readFromS3(bucket,key);
 	}
 
 	@Override
-	protected void configure(String[] args) throws Exception {
+	public void configure(String[] args) throws Exception {
 		if (args.length < 3 || args[0] == null || args[1] == null
 				|| args[2] == null) {
 			log.error("Missing parameters: bucket name, aws access key, aws secret access key");
