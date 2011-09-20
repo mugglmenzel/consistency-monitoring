@@ -17,6 +17,7 @@ import edu.kit.aifb.eorg.cloudwriter.MiniWriter;
 import edu.kit.aifb.eorg.cloudwriter.S3MultiFileWriter;
 import edu.kit.aifb.eorg.cloudwriter.S3Writer;
 import edu.kit.aifb.eorg.datacollector.CollectorStarter;
+import edu.kit.aifb.eorg.loadgenerators.CassandraLoadGenerator;
 import edu.kit.aifb.eorg.mini.LogEngine;
 import edu.kit.aifb.eorg.mini.Starter;
 import edu.kit.aifb.eorg.mini.StorageEngine;
@@ -286,6 +287,28 @@ public class ExtendedStarter {
 						countdown(start);
 						CassandraPoller poller = new CassandraPoller();
 						poller.runPoller(params);
+						return;
+					} else if (line.equalsIgnoreCase("cassandraloadgenerator")) {
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						start = Long.parseLong(line);
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						int writeThreads = Integer.parseInt(line);
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						int readThreads = Integer.parseInt(line);
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						String consistencyLevel = line.trim();
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						int payloadSize = Integer.parseInt(line);
+						countdown(start);
+						CassandraLoadGenerator load = new CassandraLoadGenerator(
+								writeThreads, readThreads, cassandraHosts,
+								consistencyLevel, payloadSize);
+						load.createLoad();
 						return;
 					} else {
 						System.out.println("Did not recognize role " + line);

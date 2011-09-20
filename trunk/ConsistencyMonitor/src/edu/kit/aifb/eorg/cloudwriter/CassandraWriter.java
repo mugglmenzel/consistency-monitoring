@@ -16,13 +16,14 @@ import edu.kit.aifb.eorg.connectors.CassandraConnector;
  */
 public class CassandraWriter extends AbstractWriter {
 
+	private Map<String, String> values = new HashMap<String, String>();
+	
 	/* (non-Javadoc)
 	 * @see edu.kit.aifb.eorg.cloudwriter.AbstractWriter#writeToCloud(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void writeToCloud(String key, String value) {
-		//TODO: table name in cassandra DB
-		Map<String, String> values = new HashMap<String, String>();
+		values.clear();
 		values.put("timestamp", value);
 		CassandraConnector.insert("usertable", key, values);
 
