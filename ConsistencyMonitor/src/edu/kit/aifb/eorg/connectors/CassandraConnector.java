@@ -167,8 +167,8 @@ public class CassandraConnector {
 			errorexception = e;
 		}
 
-		errorexception.printStackTrace();
-		errorexception.printStackTrace(System.out);
+//		errorexception.printStackTrace();
+//		errorexception.printStackTrace(System.out);
 		return Error;
 
 	}
@@ -221,8 +221,8 @@ public class CassandraConnector {
 			}
 		}
 
-		errorexception.printStackTrace();
-		errorexception.printStackTrace(System.out);
+		// errorexception.printStackTrace();
+		// errorexception.printStackTrace(System.out);
 		return Error;
 	}
 

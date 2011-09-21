@@ -66,14 +66,17 @@ public class CassandraLoadGenerator {
 
 				@Override
 				public void run() {
+//					System.out.println("New write thread started!");
 					while (true) {
 						try {
 							values.clear();
 							byte[] payload = new byte[sizeForWrites];
 							rand.nextBytes(payload);
 							values.put("loadKey", new String(payload));
-							CassandraConnector.insert("usertable", "loadKey",
-									values);
+							if (CassandraConnector.insert("usertable",
+									"loadKey", values) == CassandraConnector.Error)
+								throw new RuntimeException(
+										"A write has returned an error.");
 							synchronized (writes) {
 								writes++;
 							}
@@ -94,21 +97,26 @@ public class CassandraLoadGenerator {
 
 				@Override
 				public void run() {
-					try {
-						result.clear();
-						CassandraConnector.read("usertable", "loadKey", fields,
-								result);
-						synchronized (reads) {
-							reads++;
+//					System.out.println("New read thread started.");
+					while (true) {
+						try {
+							result.clear();
+							if (CassandraConnector.read("usertable", "loadKey",
+									fields, result) == CassandraConnector.Error)
+								throw new RuntimeException(
+										"A read has returned an error.");
+							synchronized (reads) {
+								reads++;
+							}
+						} catch (Exception e) {
+							System.out.println("Caught exception of type "
+									+ e.getMessage());
+							synchronized (reads) {
+								readTries++;
+							}
 						}
-					} catch (Exception e) {
-						System.out.println("Caught exception of type "
-								+ e.getMessage());
-						synchronized (reads) {
-							readTries++;
-						}
-					}
 
+					}
 				}
 			}).start();
 		}
@@ -119,39 +127,41 @@ public class CassandraLoadGenerator {
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {
 			}
-
+			String log = null;
 			synchronized (reads) {
 				diff = (new Date().getTime() - readStart.getTime()) / 1000.0;
 				load = (reads - oldReads) / diff;
-				System.out.println("Current read load: " + load
-						+ " req./s (an additional " + (readTries / diff)
-						+ " req./s failed.");
+//				System.out
+//						.println("diff=" + diff + ", reads=" + reads
+//								+ ", oldreads=" + oldReads + ", readTries="
+//								+ readTries);
+				log = "Current read load: " + load + " req./s (an additional "
+						+ (readTries / diff) + " req./s failed.";
+				System.out.println(log);
 				oldReads = reads;
 				readTries = 0L;
 				readStart = new Date();
 			}
 			try {
-				outfile.writeBytes(new Date() + ": Current read load: " + load
-						+ " req./s (an additional " + (readTries / diff)
-						+ " req./s failed.\n");
+				outfile.writeBytes(new Date() + ": " + log + "\n");
 			} catch (IOException e) {
-				System.out.println("Could not log read load of " + load
-						+ "req./s");
+				System.out.println("Could not log:" + log);
 			}
 			synchronized (writes) {
 				diff = (new Date().getTime() - writeStart.getTime()) / 1000.0;
 				load = (writes - oldWrites) / diff;
-				System.out.println("Current write load: " + load
-						+ " req./s (an additional " + (writeTries / diff)
-						+ "req./s failed.");
+				// System.out.println("diff=" + diff + ", writes=" + writes
+				// + ", oldwrites=" + oldWrites + ", writeTries="
+				// + writeTries);
+				log = "Current write load: " + load + " req./s (an additional "
+						+ (writeTries / diff) + " req./s failed.";
+				System.out.println(log);
 				oldWrites = writes;
 				writeTries = 0L;
 				writeStart = new Date();
 			}
 			try {
-				outfile.writeBytes(new Date() + ": Current write load: " + load
-						+ " req./s (an additional " + (writeTries / diff)
-						+ "req./s failed\n.");
+				outfile.writeBytes(new Date() + ": " + log + "\n.");
 			} catch (IOException e) {
 				System.out.println("Could not log write load of " + load
 						+ "req./s");
