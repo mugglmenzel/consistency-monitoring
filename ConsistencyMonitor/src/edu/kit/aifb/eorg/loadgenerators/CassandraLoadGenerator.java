@@ -33,6 +33,8 @@ public class CassandraLoadGenerator {
 
 	private Long reads = 0L;
 	private Long writes = 0L;
+	private Long readTries = 0L;
+	private Long writeTries = 0L;
 
 	/**
 	 * @param fields
@@ -66,14 +68,22 @@ public class CassandraLoadGenerator {
 				@Override
 				public void run() {
 					while (true) {
-						values.clear();
-						byte[] payload = new byte[sizeForWrites];
-						rand.nextBytes(payload);
-						values.put("loadKey", new String(payload));
-						CassandraConnector.insert("usertable", "loadKey",
-								values);
-						synchronized (writes) {
-							writes++;
+						try {
+							values.clear();
+							byte[] payload = new byte[sizeForWrites];
+							rand.nextBytes(payload);
+							values.put("loadKey", new String(payload));
+							CassandraConnector.insert("usertable", "loadKey",
+									values);
+							synchronized (writes) {
+								writes++;
+							}
+						} catch (Exception e) {
+							System.out.println("Caught exception of type "
+									+ e.getMessage());
+							synchronized (writes) {
+								writeTries++;
+							}
 						}
 					}
 				}
@@ -85,12 +95,21 @@ public class CassandraLoadGenerator {
 
 				@Override
 				public void run() {
-					result.clear();
-					CassandraConnector.read("usertable", "loadKey", fields,
-							result);
-					synchronized (reads) {
-						reads++;
+					try {
+						result.clear();
+						CassandraConnector.read("usertable", "loadKey", fields,
+								result);
+						synchronized (reads) {
+							reads++;
+						}
+					} catch (Exception e) {
+						System.out.println("Caught exception of type "
+								+ e.getMessage());
+						synchronized (reads) {
+							readTries++;
+						}
 					}
+
 				}
 			}).start();
 		}
@@ -105,13 +124,17 @@ public class CassandraLoadGenerator {
 			synchronized (reads) {
 				diff = (new Date().getTime() - readStart.getTime()) / 1000.0;
 				load = (reads - oldReads) / diff;
-				System.out.println("Current read load: " + load + " req./s");
+				System.out.println("Current read load: " + load
+						+ " req./s (an additional " + (readTries / diff)
+						+ " req./s failed.");
 				oldReads = reads;
+				readTries = 0L;
 				readStart = new Date();
 			}
 			try {
 				outfile.writeBytes(new Date() + ": Current read load: " + load
-						+ " req./s");
+						+ " req./s (an additional " + (readTries / diff)
+						+ " req./s failed.\n");
 			} catch (IOException e) {
 				System.out.println("Could not log read load of " + load
 						+ "req./s");
@@ -119,13 +142,17 @@ public class CassandraLoadGenerator {
 			synchronized (writes) {
 				diff = (new Date().getTime() - writeStart.getTime()) / 1000.0;
 				load = (writes - oldWrites) / diff;
-				System.out.println("Current write load: " + load + " req./s");
+				System.out.println("Current write load: " + load
+						+ " req./s (an additional " + (writeTries / diff)
+						+ "req./s failed.");
 				oldWrites = writes;
+				writeTries = 0L;
 				writeStart = new Date();
 			}
 			try {
 				outfile.writeBytes(new Date() + ": Current write load: " + load
-						+ " req./s");
+						+ " req./s (an additional " + (writeTries / diff)
+						+ "req./s failed\n.");
 			} catch (IOException e) {
 				System.out.println("Could not log write load of " + load
 						+ "req./s");
