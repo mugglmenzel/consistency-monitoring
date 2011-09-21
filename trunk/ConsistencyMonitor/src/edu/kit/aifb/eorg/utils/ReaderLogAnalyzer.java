@@ -36,7 +36,10 @@ public class ReaderLogAnalyzer {
 			"c:/temp/mon02.csv", "c:/temp/mon03.csv", "c:/temp/mon04.csv",
 			"c:/temp/mon05.csv", "c:/temp/mon06.csv", "c:/temp/mon07.csv",
 			"c:/temp/mon08.csv", "c:/temp/mon09.csv", "c:/temp/mon10.csv",
-			"c:/temp/mon11.csv", "c:/temp/mon12.csv"*/"c:/temp/poller.csv" };
+			"c:/temp/mon11.csv", "c:/temp/mon12.csv"*/"c:/temp/mon1a.csv",
+			"c:/temp/mon2a.csv", "c:/temp/mon3a.csv", "c:/temp/mon4a.csv",
+			"c:/temp/mon5a.csv", "c:/temp/mon6a.csv", "c:/temp/mon7a.csv",
+			"c:/temp/mon8a.csv", "c:/temp/mon9a.csv"};
 
 	/** all latencies are written to this file */
 	private final static File latencyOutFile = new File("c:/temp/latencies.txt");
@@ -237,6 +240,7 @@ public class ReaderLogAnalyzer {
 			lastinterval = l;
 		}
 		latencyPrinter.close();
+		pw.close();
 	}
 
 	private static void analyzeOldLog() throws Exception {
