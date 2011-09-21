@@ -5,7 +5,6 @@ package edu.kit.aifb.eorg.loadgenerators;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +46,7 @@ public class CassandraLoadGenerator {
 			throws Exception {
 		this.noOfWriteThreads = noOfWriteThreads;
 		this.noOfReadThreads = noOfReadThreads;
-		fields.add("timestamp");
+		fields.add("loadKey");
 		CassandraConnector
 				.init(hosts, ConsistencyLevel.valueOf(consistencyLvl));
 		this.sizeForWrites = sizeForWrites;
