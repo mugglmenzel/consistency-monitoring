@@ -32,14 +32,26 @@ public class ReaderLogAnalyzer {
 	private final static boolean useOldFormat = false;
 
 	/** list of log files */
-	private final static String[] logfiles = { /*"c:/temp/mon01.csv",
-			"c:/temp/mon02.csv", "c:/temp/mon03.csv", "c:/temp/mon04.csv",
-			"c:/temp/mon05.csv", "c:/temp/mon06.csv", "c:/temp/mon07.csv",
-			"c:/temp/mon08.csv", "c:/temp/mon09.csv", "c:/temp/mon10.csv",
-			"c:/temp/mon11.csv", "c:/temp/mon12.csv"*/"c:/temp/mon1a.csv",
-			"c:/temp/mon2a.csv", "c:/temp/mon3a.csv", "c:/temp/mon4a.csv",
-			"c:/temp/mon5a.csv", "c:/temp/mon6a.csv", "c:/temp/mon7a.csv",
-			"c:/temp/mon8a.csv", "c:/temp/mon9a.csv"};
+	private final static String[] logfiles = { /*
+												 * "c:/temp/mon01.csv",
+												 * "c:/temp/mon02.csv",
+												 * "c:/temp/mon03.csv",
+												 * "c:/temp/mon04.csv",
+												 * "c:/temp/mon05.csv",
+												 * "c:/temp/mon06.csv",
+												 * "c:/temp/mon07.csv",
+												 * "c:/temp/mon08.csv",
+												 * "c:/temp/mon09.csv",
+												 * "c:/temp/mon10.csv",
+												 * "c:/temp/mon11.csv",
+												 * "c:/temp/mon12.csv"
+												 */
+	"c:/temp/mon1b.csv", "c:/temp/mon2b.csv", "c:/temp/mon3b.csv",
+			"c:/temp/mon4b.csv", "c:/temp/mon5b.csv", "c:/temp/mon6b.csv",
+			"c:/temp/mon7b.csv", "c:/temp/mon8b.csv", "c:/temp/mon9b.csv",
+			"c:/temp/mon1a.csv", "c:/temp/mon2a.csv", "c:/temp/mon3a.csv",
+			"c:/temp/mon4a.csv", "c:/temp/mon5a.csv", "c:/temp/mon6a.csv",
+			"c:/temp/mon7a.csv", "c:/temp/mon8a.csv", "c:/temp/mon9a.csv" };
 
 	/** all latencies are written to this file */
 	private final static File latencyOutFile = new File("c:/temp/latencies.txt");
@@ -94,16 +106,24 @@ public class ReaderLogAnalyzer {
 					pos = line.indexOf(":");
 					pos2 = line.indexOf(" ");
 					version = Long.parseLong(line.substring(pos + 1, pos2));
-					writeTimestamp = Long.parseLong(line.substring(pos2 + 1));
+					if (line.matches("(\\d)*"))
+						writeTimestamp = Long.parseLong(line
+								.substring(pos2 + 1));
+					else {
+						line = line.substring(pos2 + 1);
+						writeTimestamp = Long.parseLong(line.substring(0,
+								line.indexOf(" ")));
+					}
 					writeTimestamps.put(version, writeTimestamp);
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				line = br.readLine();
 			}
 			br.close();
 		}
-		System.out
-				.println("Done extracting write timestamps. Now, analyzing logs.");
+		System.out.println("Done extracting " + writeTimestamps.size()
+				+ " write timestamps. Now, analyzing logs.");
 	}
 
 	private static void analyzeNewLogs() throws Exception {
@@ -134,11 +154,12 @@ public class ReaderLogAnalyzer {
 					readTimestamp = Long.parseLong(line.substring(0, pos));
 					line = line.substring(pos2);
 					pos = line.indexOf(":");
-					if(pos==-1){
-						System.out.println("The log file does not contain latencies. Use old mode instead. Terminating evaluation.");
+					if (pos == -1) {
+						System.out
+								.println("The log file does not contain latencies. Use old mode instead. Terminating evaluation.");
 						return;
 					}
-					latency = Long.parseLong(line.substring(pos+1).trim());
+					latency = Long.parseLong(line.substring(pos + 1).trim());
 					latencyPrinter.println(latency);
 					// System.out.println(line + " ->"+ readTimestamp +
 					// ": "+version+" "+ writeTimestamp);
@@ -159,8 +180,8 @@ public class ReaderLogAnalyzer {
 							break;
 						}
 					}
-					// System.out.println("latest timestamp for read " +
-					// readTimestamp + " is "+ latestWriteTimestamp);
+					// System.out.println("latest timestamp for read "
+					// + readTimestamp + " is "+ latestWriteTimestamp);
 					if (latestWriteTimestamp != null) {
 						// it's not the head of a log file => we can analyze the
 						// probabilities of a stale reads over time
@@ -168,6 +189,8 @@ public class ReaderLogAnalyzer {
 						long index = diff / intervalSize;
 						intervals.add(index);
 						if (version >= latestVersion) {
+							// System.out.println("FRESH: "+ version + " " +
+							// latestVersion);
 							// fresh read
 							oldval = consistentReads.get(index);
 							if (oldval == null)
@@ -175,6 +198,8 @@ public class ReaderLogAnalyzer {
 							else
 								consistentReads.put(index, oldval + 1L);
 						} else {
+							// System.out.println("STALE: " + version + " "+
+							// latestVersion);
 							// stale read
 							oldval = staleReads.get(index);
 							if (oldval == null)
@@ -227,7 +252,7 @@ public class ReaderLogAnalyzer {
 			}
 			fresh = consistentReads.get(l);
 			stale = staleReads.get(l);
-			print = l * intervalSize + " " + ((l + 1) * intervalSize);
+			print = (l * intervalSize) + " " + ((l + 1) * intervalSize);
 			if (fresh == null)
 				print += " 0";
 			else
@@ -237,6 +262,7 @@ public class ReaderLogAnalyzer {
 			else
 				print += " " + stale;
 			pw.println(print);
+			// System.out.println(print);
 			lastinterval = l;
 		}
 		latencyPrinter.close();
