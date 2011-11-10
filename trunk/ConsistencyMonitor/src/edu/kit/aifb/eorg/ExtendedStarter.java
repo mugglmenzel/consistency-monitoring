@@ -12,15 +12,18 @@ import edu.kit.aifb.eorg.cloudpolling.CassandraPoller;
 import edu.kit.aifb.eorg.cloudpolling.MiniPoller;
 import edu.kit.aifb.eorg.cloudpolling.S3MultiFilePoller;
 import edu.kit.aifb.eorg.cloudpolling.S3Poller;
+import edu.kit.aifb.eorg.cloudpolling.GAEPoller;
 import edu.kit.aifb.eorg.cloudwriter.CassandraWriter;
 import edu.kit.aifb.eorg.cloudwriter.MiniWriter;
 import edu.kit.aifb.eorg.cloudwriter.S3MultiFileWriter;
 import edu.kit.aifb.eorg.cloudwriter.S3Writer;
+import edu.kit.aifb.eorg.cloudwriter.GAEWriter;
 import edu.kit.aifb.eorg.datacollector.CollectorStarter;
 import edu.kit.aifb.eorg.loadgenerators.CassandraLoadGenerator;
 import edu.kit.aifb.eorg.mini.LogEngine;
 import edu.kit.aifb.eorg.mini.Starter;
 import edu.kit.aifb.eorg.mini.StorageEngine;
+
 
 /**
  * 
@@ -46,6 +49,7 @@ public class ExtendedStarter {
 	private static long pollinterval;
 	private static long writeinterval;
 	private static String collectorurl;
+	private static String gaeUrl;
 	private static long start;
 	private static String miniport;
 	private static String cassandraHosts;
@@ -140,7 +144,7 @@ public class ExtendedStarter {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
 						start = Long.parseLong(line);
-						params = new String[6];
+						params = new String[7];
 						params[0] = collectorurl;
 						params[1] = "" + writeinterval;
 						params[2] = filename;
@@ -210,6 +214,20 @@ public class ExtendedStarter {
 						CassandraWriter writer = new CassandraWriter();
 						writer.runWriter(params);
 						return;
+					 }	else if (line.equalsIgnoreCase("gaewriter")) {
+							line = config.remove(0);
+							line = line.substring(line.indexOf(":") + 1);
+							start = Long.parseLong(line);
+							params = new String[5];
+							params[0] = collectorurl;
+							params[1] = "" + writeinterval;
+							params[2] = filename;
+							params[3] = "Write Duration";
+							params[4] = gaeUrl;
+							countdown(start);
+							GAEWriter writer = new GAEWriter();
+							writer.runWriter(params);
+							return;
 					} else if (line.equalsIgnoreCase("minimonitor")) {
 						line = config.remove(0);
 						line = line.substring(line.indexOf(":") + 1);
@@ -286,6 +304,20 @@ public class ExtendedStarter {
 						params[5] = cassandraConsistencyLevel;
 						countdown(start);
 						CassandraPoller poller = new CassandraPoller();
+						poller.runPoller(params);
+						return;
+					}	else if (line.equalsIgnoreCase("gaepoller")) {
+						line = config.remove(0);
+						line = line.substring(line.indexOf(":") + 1);
+						start = Long.parseLong(line);
+						params = new String[5];
+						params[0] = collectorurl;
+						params[1] = "" + writeinterval;
+						params[2] = filename;
+						params[3] = "Write Duration";
+						params[4] = gaeUrl;
+						countdown(start);
+						GAEPoller poller = new GAEPoller();
 						poller.runPoller(params);
 						return;
 					} else if (line.equalsIgnoreCase("cassandraloadgenerator")) {
