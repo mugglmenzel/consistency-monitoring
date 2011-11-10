@@ -10,9 +10,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import com.amazon.s3.AWSAuthConnection;
-import com.amazon.s3.S3Object;
-
 /**
  * 
  * This class provides some very fast but hard-coded access methods for S3
@@ -30,11 +27,10 @@ public final class GAEConnector {
 	}
 
 	public final static void writeToGAE (final String dbKey, final String dbValue) {
-		String key = URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(dbKey, "UTF-8");
-	    String data = key + "&" + URLEncoder.encode("value", "UTF-8") + "=" + URLEncoder.encode(dbValue, "UTF-8");
-    	
+		    	
 	    try {   
-	    	
+	    	String key = URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(dbKey, "UTF-8");
+		    String data = key + "&" + URLEncoder.encode("value", "UTF-8") + "=" + URLEncoder.encode(dbValue, "UTF-8");
     	    // POST data
     	    URL url = new URL(urlString);
     	    URLConnection conn = url.openConnection();
@@ -61,7 +57,7 @@ public final class GAEConnector {
 	
 
 	public final static String readFromGAE(final String key) {
-		String result;
+		String result = "";
 		try{
     	    // GET data
     	    URL url = new URL(urlString+"?"+key);
