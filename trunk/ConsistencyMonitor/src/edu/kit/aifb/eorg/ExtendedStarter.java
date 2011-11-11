@@ -85,6 +85,8 @@ public class ExtendedStarter {
 		line = config.remove(0);
 		bucketname = line.substring(line.indexOf(":") + 1);
 		line = config.remove(0);
+		gaeUrl = line.substring(line.indexOf(":") + 1);
+		line = config.remove(0);
 		pollinterval = Long.parseLong(line.substring(line.indexOf(":") + 1));
 		line = config.remove(0);
 		writeinterval = Long.parseLong(line.substring(line.indexOf(":") + 1));
