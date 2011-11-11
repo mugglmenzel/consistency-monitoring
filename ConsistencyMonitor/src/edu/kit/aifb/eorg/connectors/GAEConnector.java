@@ -4,8 +4,10 @@
 package edu.kit.aifb.eorg.connectors;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -21,15 +23,21 @@ import java.util.*;
  */
 public final class GAEConnector {
 
-	private static String urlString;
+	protected static String urlString; 
+	protected static RandomAccessFile file; 
 	
 	public final static void doInitialize(String url)  {
-		urlString = url;
+		urlString = url;		
+		try {
+			file = new RandomAccessFile("latencies.csv", "rw");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public final static void writeToGAE (final String dbKey, final String dbValue) {
-		    	
-	    try {   
+		    			
+	    try {  
 	    	String key = URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(dbKey, "UTF-8");
 		    String data = key + "&" + URLEncoder.encode("value", "UTF-8") + "=" + URLEncoder.encode(dbValue, "UTF-8");
     	    // POST data
@@ -38,7 +46,7 @@ public final class GAEConnector {
     	    conn.setDoOutput(true);
     	    conn.setReadTimeout(5000);
     	    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-    	    Date startTime = new Date().getTime();
+    	    long startTime = new Date().getTime();
     	    wr.write(data);
     	    wr.flush();
     	    	    	    
@@ -48,18 +56,16 @@ public final class GAEConnector {
     	    while ((line = rd.readLine()) != null) {
     	        System.out.println(line);	    	        
     	    }
-    	    Date endTime = new Date().getTime();
+    	    long endTime = new Date().getTime();
     	    long latency = (endTime-startTime)/2;
-    	    System.out.println("Latency POST: "+latency+" ms");
+    	    file.writeBytes("\nLatency in POST ms: ;" + latency);
     	    wr.close();
     	    rd.close();
 	    	}
 	    	catch (Exception e) {
 	    		e.printStackTrace();
 	    	}
-	    } 	    	    	   
-	
-	
+	    } 	    	    		
 
 	public final static String readFromGAE(final String key) {
 		String result = "";
@@ -70,13 +76,13 @@ public final class GAEConnector {
     	    conn.setReadTimeout(5000);
     	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
     	    String line;
-    	    Date startTime = new Date().getTime();
+    	    long startTime = new Date().getTime();
     	    while ((line = rd.readLine()) != null) {
     	        result = result + "\n" + line;
     	    }
-    	    Date endTime = new Date().getTime();
+    	    long endTime = new Date().getTime();
     	    long latency = (endTime-startTime)/2;
-    	    System.out.println("Latency GET: "+latency+" ms");
+    	    file.writeBytes("\nLatency in GET ms: ;" + latency);
     		rd.close();
 
 		} catch (Exception e) {
