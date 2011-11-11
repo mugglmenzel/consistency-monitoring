@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.*;
 
 /**
  * 
@@ -37,6 +38,7 @@ public final class GAEConnector {
     	    conn.setDoOutput(true);
     	    conn.setReadTimeout(5000);
     	    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+    	    Date startTime = new Date().getTime();
     	    wr.write(data);
     	    wr.flush();
     	    	    	    
@@ -46,6 +48,9 @@ public final class GAEConnector {
     	    while ((line = rd.readLine()) != null) {
     	        System.out.println(line);	    	        
     	    }
+    	    Date endTime = new Date().getTime();
+    	    long latency = (endTime-startTime)/2;
+    	    System.out.println("Latency POST: "+latency+" ms");
     	    wr.close();
     	    rd.close();
 	    	}
@@ -65,9 +70,13 @@ public final class GAEConnector {
     	    conn.setReadTimeout(5000);
     	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
     	    String line;
+    	    Date startTime = new Date().getTime();
     	    while ((line = rd.readLine()) != null) {
     	        result = result + "\n" + line;
     	    }
+    	    Date endTime = new Date().getTime();
+    	    long latency = (endTime-startTime)/2;
+    	    System.out.println("Latency GET: "+latency+" ms");
     		rd.close();
 
 		} catch (Exception e) {
