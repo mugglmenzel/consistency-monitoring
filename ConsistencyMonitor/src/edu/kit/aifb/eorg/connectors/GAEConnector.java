@@ -15,11 +15,11 @@ import java.util.*;
 
 /**
  * 
- * This class provides some very fast but hard-coded access methods for S3
+ * 
  * 
  * @author Robin Hoffmann
  * 
- *         created on: 10.11.2011
+ *         created on: 14.11.2011
  */
 public final class GAEConnector {
 
@@ -58,7 +58,7 @@ public final class GAEConnector {
     	    }
     	    long endTime = new Date().getTime();
     	    long latency = (endTime-startTime)/2;
-    	    file.writeBytes("\nLatency in POST ms: ;" + latency);
+    	    file.writeBytes("\nLatency POST in ms: ;" + latency);
     	    wr.close();
     	    rd.close();
 	    	}
@@ -82,7 +82,7 @@ public final class GAEConnector {
     	    }
     	    long endTime = new Date().getTime();
     	    long latency = (endTime-startTime)/2;
-    	    file.writeBytes("\nLatency in GET ms: ;" + latency);
+    	    file.writeBytes("\nLatency GET in ms: ;" + latency);
     		rd.close();
 
 		} catch (Exception e) {
