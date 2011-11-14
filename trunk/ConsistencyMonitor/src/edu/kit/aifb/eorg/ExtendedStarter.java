@@ -316,7 +316,7 @@ public class ExtendedStarter {
 						params[0] = collectorurl;
 						params[1] = "" + writeinterval;
 						params[2] = filename;
-						params[3] = "Write Duration";
+						params[3] = id;
 						params[4] = gaeUrl;
 						countdown(start);
 						GAEPoller poller = new GAEPoller();
