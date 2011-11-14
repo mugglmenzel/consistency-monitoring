@@ -46,12 +46,23 @@ public class ReaderLogAnalyzer {
 												 * "c:/temp/mon11.csv",
 												 * "c:/temp/mon12.csv"
 												 */
-	"c:/temp/mon1b.csv", "c:/temp/mon2b.csv", "c:/temp/mon3b.csv",
-			"c:/temp/mon4b.csv", "c:/temp/mon5b.csv", "c:/temp/mon6b.csv",
-			"c:/temp/mon7b.csv", "c:/temp/mon8b.csv", "c:/temp/mon9b.csv",
-			"c:/temp/mon1a.csv", "c:/temp/mon2a.csv", "c:/temp/mon3a.csv",
-			"c:/temp/mon4a.csv", "c:/temp/mon5a.csv", "c:/temp/mon6a.csv",
-			"c:/temp/mon7a.csv", "c:/temp/mon8a.csv", "c:/temp/mon9a.csv" };
+	"c:/temp/mon1.csv",
+	/* "c:/temp/mon2.csv", */
+	"c:/temp/mon3.csv", "c:/temp/mon4.csv", "c:/temp/mon5.csv",
+			"c:/temp/mon6.csv", "c:/temp/mon7.csv", "c:/temp/mon8.csv",
+			"c:/temp/mon9.csv", "c:/temp/mon10.csv", "c:/temp/mon11.csv",
+			"c:/temp/mon12.csv"
+
+	/*
+	 * "c:/temp/mon1b.csv", "c:/temp/mon2b.csv", "c:/temp/mon3b.csv",
+	 * "c:/temp/mon4b.csv", "c:/temp/mon5b.csv", "c:/temp/mon6b.csv",
+	 * "c:/temp/mon7b.csv", "c:/temp/mon8b.csv", "c:/temp/mon9b.csv",
+	 */
+	/*
+	 * "c:/temp/mon1a.csv", "c:/temp/mon2a.csv", "c:/temp/mon3a.csv",
+	 * "c:/temp/mon4a.csv", "c:/temp/mon5a.csv", "c:/temp/mon6a.csv",
+	 * "c:/temp/mon7a.csv", "c:/temp/mon8a.csv", "c:/temp/mon9a.csv"
+	 */};
 
 	/** all latencies are written to this file */
 	private final static File latencyOutFile = new File("c:/temp/latencies.txt");
@@ -101,8 +112,10 @@ public class ReaderLogAnalyzer {
 			int pos = 0, pos2 = 0;
 			long version = -1;
 			long writeTimestamp = 0;
+			int linecounter = 0;
 			while (line != null) {
 				try {
+					linecounter++;
 					pos = line.indexOf(":");
 					pos2 = line.indexOf(" ");
 					version = Long.parseLong(line.substring(pos + 1, pos2));
@@ -116,6 +129,9 @@ public class ReaderLogAnalyzer {
 					}
 					writeTimestamps.put(version, writeTimestamp);
 				} catch (Exception e) {
+					System.out.println("Exception in line " + linecounter
+							+ " of file " + file);
+					System.out.println("line was:\n"+line);
 					e.printStackTrace();
 				}
 				line = br.readLine();
