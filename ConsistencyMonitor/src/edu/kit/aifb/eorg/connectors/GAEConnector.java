@@ -71,7 +71,7 @@ public final class GAEConnector {
 		String result = "";
 		try{
     	    // GET data
-    	    URL url = new URL(urlString+"?"+key);
+    	    URL url = new URL(urlString+"?"+URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(key, "UTF-8");
     	    URLConnection conn = url.openConnection();
     	    conn.setReadTimeout(5000);
     	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
