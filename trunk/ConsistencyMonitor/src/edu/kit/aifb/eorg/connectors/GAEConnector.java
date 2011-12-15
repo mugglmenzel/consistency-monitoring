@@ -77,13 +77,15 @@ public final class GAEConnector {
     	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
     	    String line;
     	    long startTime = new Date().getTime();
-    	    while ((line = rd.readLine()) != null) {    	    	
-    	        result = line;
-    	    }
+    	    
+    	    line = rd.readLine();    	    
+    	    String [] split = line.split(";");
+    	    result = split[0];
+    	    String classVariable = split[1];
     	    long endTime = new Date().getTime();
     	    long latency = (endTime-startTime)/2;
-    	    System.out.println("Data = "+result+"\nLatency GET in ms: ;" + latency);
-    	    file.writeBytes("\nLatency GET in ms: ;" + latency);
+    	    System.out.println("Data = "+result+"\nKlassenvariable: "+classVariable+"\nLatency GET in ms: " + latency);
+    	    file.writeBytes("Data;"+result+"\nKlassenvariable;"+classVariable+"\nLatency GET in ms: ;" + latency);
     		rd.close();
 
 		} catch (Exception e) {
