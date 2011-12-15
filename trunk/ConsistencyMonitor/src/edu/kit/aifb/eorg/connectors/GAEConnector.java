@@ -85,7 +85,7 @@ public final class GAEConnector {
     	    long endTime = new Date().getTime();
     	    long latency = (endTime-startTime)/2;
     	    System.out.println("Data = "+result+"\nKlassenvariable: "+classVariable+"\nLatency GET in ms: " + latency);
-    	    file.writeBytes("Data;"+result+"\nKlassenvariable;"+classVariable+"\nLatency GET in ms: ;" + latency);
+    	    file.writeBytes(result+";Klassenvariable;"+classVariable+";Latency GET in ms:;" + latency + "\n;");
     		rd.close();
 
 		} catch (Exception e) {
