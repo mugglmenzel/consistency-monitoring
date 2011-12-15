@@ -46,12 +46,10 @@ public class ReaderLogAnalyzer {
 												 * "c:/temp/mon11.csv",
 												 * "c:/temp/mon12.csv"
 												 */
-	"c:/temp/mon1.csv",
-	/* "c:/temp/mon2.csv", */
-	"c:/temp/mon3.csv", "c:/temp/mon4.csv", "c:/temp/mon5.csv",
-			"c:/temp/mon6.csv", "c:/temp/mon7.csv", "c:/temp/mon8.csv",
-			"c:/temp/mon9.csv", "c:/temp/mon10.csv", "c:/temp/mon11.csv",
-			"c:/temp/mon12.csv"
+	"c:/temp/mon1.csv", "c:/temp/mon2.csv", "c:/temp/mon3.csv",
+			"c:/temp/mon4.csv", "c:/temp/mon5.csv", "c:/temp/mon6.csv",
+			"c:/temp/mon7.csv", "c:/temp/mon8.csv", "c:/temp/mon9.csv",
+			"c:/temp/mon10.csv", "c:/temp/mon11.csv", "c:/temp/mon12.csv"
 
 	/*
 	 * "c:/temp/mon1b.csv", "c:/temp/mon2b.csv", "c:/temp/mon3b.csv",
@@ -131,7 +129,7 @@ public class ReaderLogAnalyzer {
 				} catch (Exception e) {
 					System.out.println("Exception in line " + linecounter
 							+ " of file " + file);
-					System.out.println("line was:\n"+line);
+					System.out.println("line was:\n" + line);
 					e.printStackTrace();
 				}
 				line = br.readLine();
