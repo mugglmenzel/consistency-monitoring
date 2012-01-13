@@ -38,6 +38,7 @@ public final class GAEConnector {
 	public final static void writeToGAE (final String dbKey, final String dbValue) {
 		    			
 	    try {  
+	    	long startTime = new Date().getTime();
 	    	String key = URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(dbKey, "UTF-8");
 		    String data = key + "&" + URLEncoder.encode("value", "UTF-8") + "=" + URLEncoder.encode(dbValue, "UTF-8");
     	    // POST data
@@ -46,17 +47,18 @@ public final class GAEConnector {
     	    conn.setDoOutput(true);
     	    conn.setReadTimeout(5000);
     	    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-    	    long startTime = new Date().getTime();
+    	    
     	    wr.write(data);
     	    wr.flush();
-    	    	    	    
+    	    long endTime = new Date().getTime();
+    	    
     	    // Get the response
     	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
     	    String line;
     	    while ((line = rd.readLine()) != null) {
     	        System.out.println(line);	    	        
     	    }
-    	    long endTime = new Date().getTime();
+    	    
     	    long latency = (endTime-startTime)/2;
     	    file.writeBytes("\nLatency POST in ms: ;" + latency);
     	    wr.close();
@@ -70,14 +72,13 @@ public final class GAEConnector {
 	public final static String readFromGAE(final String key) {
 		String result = "";
 		try{
+    	    long startTime = new Date().getTime();
     	    // GET data
     	    URL url = new URL(urlString+"?"+URLEncoder.encode("key", "UTF-8") + "=" + URLEncoder.encode(key, "UTF-8"));
     	    URLConnection conn = url.openConnection();
     	    conn.setReadTimeout(5000);
     	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    	    String line;
-    	    long startTime = new Date().getTime();
-    	    
+    	    String line;    	    
     	    line = rd.readLine();    	    
     	    String [] split = line.split(";");
     	    result = split[0];
