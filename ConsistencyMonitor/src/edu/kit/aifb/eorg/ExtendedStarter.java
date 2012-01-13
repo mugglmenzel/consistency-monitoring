@@ -314,7 +314,7 @@ public class ExtendedStarter {
 						start = Long.parseLong(line);
 						params = new String[5];
 						params[0] = collectorurl;
-						params[1] = "" + writeinterval;
+						params[1] = "" + pollinterval;
 						params[2] = filename;
 						params[3] = id;
 						params[4] = gaeUrl;
