@@ -93,28 +93,48 @@ public static void writeCommands (String user, List<String> serverUrls, HashMap<
 		String key = null;
 		cf.println("# Connect");
 		
-			while (iter.hasNext()){
-				String line=iter.next();
-				String role = line.substring(0, line.indexOf(":"));	
-				String serverURL = line.substring(line.indexOf(":")+1);	
-				
-				Set <String> set = keyMap.keySet();
-				Iterator <String> setIter = set.iterator();
-				while (setIter.hasNext()){
-					String keyString = setIter.next();					
-					if (serverURL.contains(keyString)){
-						key=keyMap.get(keyString);
-					}
-				}						
-				
-				cf.println("open sftp://"+user+"@"+serverURL + " -privatekey="+"\""+key+"\"");
-				cf.println("cd /home/ec2-user/monitoring");		
-				cf.println("rm *.jar");
-				cf.println("get ./ "+downloadOutputDir+"\\Downloads\\"+role);	
-				cf.println("close");
-			}
-			cf.println("exit");
-			cf.close();	
+		// Erster Durchlauf um für alle Server Key in den Cache zu laden.
+		while (iter.hasNext()){
+			String line=iter.next();
+			String serverURL = line.substring(line.indexOf(":")+1);	
+			
+			Set <String> set = keyMap.keySet();
+			Iterator <String> setIter = set.iterator();
+			while (setIter.hasNext()){
+				String keyString = setIter.next();					
+				if (serverURL.contains(keyString)){
+					key=keyMap.get(keyString);
+				}
+			}						
+			
+			cf.println("open sftp://"+user+"@"+serverURL + " -privatekey="+"\""+key+"\"");
+			cf.println("close");
+		}
+			
+		//Zweiter Durchlauf für Befehle
+		iter = serverUrls.iterator();
+		while (iter.hasNext()){
+			String line=iter.next();
+			String role = line.substring(0, line.indexOf(":"));	
+			String serverURL = line.substring(line.indexOf(":")+1);	
+			
+			Set <String> set = keyMap.keySet();
+			Iterator <String> setIter = set.iterator();
+			while (setIter.hasNext()){
+				String keyString = setIter.next();					
+				if (serverURL.contains(keyString)){
+					key=keyMap.get(keyString);
+				}
+			}						
+			
+			cf.println("open sftp://"+user+"@"+serverURL + " -privatekey="+"\""+key+"\"");
+			cf.println("cd /home/ec2-user/monitoring");		
+			cf.println("rm *.jar");
+			cf.println("get ./ "+downloadOutputDir+"\\Downloads\\"+role);	
+			cf.println("close");
+		}
+		cf.println("exit");
+		cf.close();	
 
 	}
 }
