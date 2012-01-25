@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 
+/*
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +16,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-
+*/
 
 /**
  * Servlet for storing and reading data in the Google Datastore
@@ -28,6 +29,7 @@ import com.google.appengine.api.datastore.KeyFactory;
  *         
  */
 
+/*
 public class GoogleDatastoreServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -74,3 +76,4 @@ public class GoogleDatastoreServlet extends HttpServlet {
 		out.close();
 	}
 }
+*/
