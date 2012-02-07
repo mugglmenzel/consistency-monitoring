@@ -5,7 +5,7 @@ package edu.kit.aifb.eorg.connectors;
 
 import java.util.ArrayList;
 import java.util.List;
-/**
+
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
@@ -14,10 +14,10 @@ import com.amazonaws.services.simpledb.model.Item;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.model.ReplaceableItem;
 import com.amazonaws.services.simpledb.model.SelectRequest;
-*/
+
 /**
  * 
- * This class provides some very fast but hard-coded access methods for S3
+ * This class provides some very fast but hard-coded access methods for SimpleDB
  * 
  * @author Jasmin Giemsch
  * 
