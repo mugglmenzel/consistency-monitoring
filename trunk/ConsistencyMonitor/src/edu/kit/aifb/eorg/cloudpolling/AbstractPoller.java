@@ -39,19 +39,19 @@ public abstract class AbstractPoller {
 	 */
 	public abstract void configure(String[] args) throws Exception;
 
-	protected static final Logger log = Logger.getLogger(AbstractPoller.class);
+	protected static Logger log = Logger.getLogger(AbstractPoller.class);
 
-	private static String datacollectoraddress;
-	private static long pollIntervalInMillis;
+	protected static String datacollectoraddress;
+	protected static long pollIntervalInMillis;
 	protected static String filename;
-	private static String senderIdentifier;
-	private static DataCollectorService datacollector;
-	private static RandomAccessFile file;
+	protected static String senderIdentifier;
+	protected static DataCollectorService datacollector;
+	protected static RandomAccessFile file;
 	/** stores the latest time this timestamp was read */
-	private static HashMap<Integer, Long> readTimestamps = new HashMap<Integer, Long>();
+	protected static HashMap<Integer, Long> readTimestamps = new HashMap<Integer, Long>();
 	/** stores the update date of a particular timestamp */
-	private static HashMap<Integer, Long> writeTimestamps = new HashMap<Integer, Long>();
-	private static int buffersize = 10; // number of buffered versions in
+	protected static HashMap<Integer, Long> writeTimestamps = new HashMap<Integer, Long>();
+	protected static int buffersize = 10; // number of buffered versions in
 										// "durations"
 
 	/**

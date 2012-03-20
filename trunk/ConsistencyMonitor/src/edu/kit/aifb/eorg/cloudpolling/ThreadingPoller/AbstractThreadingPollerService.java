@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 
 import edu.kit.aifb.eorg.datacollector.client.DataCollectorService;
 
@@ -20,16 +19,18 @@ import edu.kit.aifb.eorg.datacollector.client.DataCollectorService;
  * 
  *         created on: 24.01.2012
  */
-public class AbstractPollerService extends Thread{
+public class AbstractThreadingPollerService extends Thread {
+
+	/** Logger */
+	private static final Logger log = Logger
+			.getLogger(AbstractThreadingPoller.class);
 
 	/** stores the latest time this timestamp was read */
 	private HashMap<Integer, Long> readTimestamps = new HashMap<Integer, Long>();
 	/** stores the update date of a particular timestamp */
 	private HashMap<Integer, Long> writeTimestamps = new HashMap<Integer, Long>();
 
-	protected static final Logger log = Logger.getLogger(AbstractPollerService.class);
-
-	private AbstractPoller ap;
+	private AbstractThreadingPoller ap;
 	private long pollIntervalInMillis;
 	private RandomAccessFile file;
 	private int buffersize = 10;
@@ -39,26 +40,29 @@ public class AbstractPollerService extends Thread{
 
 	private Calendar start, end;
 
-
-	public AbstractPollerService(AbstractPoller ap, long pollIntervalInMillis, RandomAccessFile file, String filename, int buffersize, DataCollectorService datacollector, String senderIdentifier){
+	public AbstractThreadingPollerService(AbstractThreadingPoller ap,
+			long pollIntervalInMillis, RandomAccessFile file, String filename,
+			int buffersize, DataCollectorService datacollector,
+			String senderIdentifier) {
 		this.ap = ap;
-		this.file=file;
-		this.filename=filename;
-		this.buffersize=buffersize;
-		this.datacollector=datacollector;
-		this.senderIdentifier=senderIdentifier;
+		this.file = file;
+		this.filename = filename;
+		this.buffersize = buffersize;
+		this.datacollector = datacollector;
+		this.senderIdentifier = senderIdentifier;
 		this.pollIntervalInMillis = pollIntervalInMillis;
 	}
+
 	/**
 	 * @param args
 	 *            String [] first parameters must be data collector wsdl
 	 *            address, poll interval in millis, file name, sender
 	 *            identifier. Additional parameters are passed to method
 	 *            configure(String [] args)
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void run() {
-		PropertyConfigurator.configureAndWatch("log4j.properties");
+		// PropertyConfigurator.configureAndWatch("log4j.properties");
 
 		while (true) {
 			try {
@@ -67,14 +71,14 @@ public class AbstractPollerService extends Thread{
 				String data = ap.readFromCloud(filename);
 				end = Calendar.getInstance();
 
-				Thread.sleep(pollIntervalInMillis);				
+				Thread.sleep(pollIntervalInMillis);
 
 				file.writeBytes(start.getTimeInMillis() + ":" + data
 						+ " latency:"
 						+ (end.getTimeInMillis() - start.getTimeInMillis())
 						+ "\n");
 
-				if (data != null){
+				if (data != null) {
 					String[] temp = data.split("\\s");
 					int version = Integer.parseInt(temp[0]);
 					long date = Long.parseLong(temp[1].trim());
@@ -111,9 +115,9 @@ public class AbstractPollerService extends Thread{
 						// done repeat until buffersize is no longer violated
 					}
 				}
-			}  catch (Exception e) {
-				log.error(end.getTime()+": Error while polling...", e);
+			} catch (Exception e) {
+				log.error(end.getTime() + ": Error while polling...", e);
 			}
 		}
-	} 
+	}
 }
