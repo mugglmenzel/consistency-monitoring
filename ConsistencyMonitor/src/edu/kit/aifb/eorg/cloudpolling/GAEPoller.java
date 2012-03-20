@@ -3,6 +3,7 @@
  */
 package edu.kit.aifb.eorg.cloudpolling;
 
+import edu.kit.aifb.eorg.cloudpolling.multithreaded.AbstractPollerMultiThreaded;
 import edu.kit.aifb.eorg.connectors.GAEConnector;
 
 /**
@@ -10,7 +11,7 @@ import edu.kit.aifb.eorg.connectors.GAEConnector;
  * 
  *         created on: 10.11.2011
  */
-public class GAEPoller extends AbstractPoller {
+public class GAEPoller extends AbstractPollerMultiThreaded {
 
 	
 	@Override
