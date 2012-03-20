@@ -3,13 +3,12 @@ package edu.kit.aifb.eorg.cloudpolling.ThreadingPoller;
 import java.io.RandomAccessFile;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import edu.kit.aifb.eorg.datacollector.client.DataCollectorService;
+import edu.kit.aifb.eorg.cloudpolling.AbstractPoller;
 import edu.kit.aifb.eorg.datacollector.client.DataCollectorServiceService;
 
 /**
@@ -19,39 +18,13 @@ import edu.kit.aifb.eorg.datacollector.client.DataCollectorServiceService;
  * 
  *         changed to Thread-Service on: 24.01.2012
  */
-public abstract class AbstractPoller {
+public abstract class AbstractThreadingPoller extends AbstractPoller {
 
-	/**
-	 * reads a timestamp version tuple from the cloud.
-	 * 
-	 * @param key
-	 * @return null if an error occurs. May never throw an exception.
-	 */
-	public abstract String readFromCloud(String key);
+	static {
+		log = Logger.getLogger(AbstractThreadingPoller.class);
+	}
 
-	/**
-	 * receives configuration parameters from the ExtendedStarter class
-	 * 
-	 * @param args
-	 */
-	public abstract void configure(String[] args) throws Exception;
-
-	protected static final Logger log = Logger.getLogger(AbstractPoller.class);
-
-	protected static DataCollectorService datacollector;
-	protected static String datacollectoraddress;
-	protected static long pollIntervalInMillis;
-	protected static String filename;
-	protected static String senderIdentifier;
-	protected static RandomAccessFile file;
-	
-	/** stores the latest time this timestamp was read */
-	protected static HashMap<Integer, Long> readTimestamps = new HashMap<Integer, Long>();
-	/** stores the update date of a particular timestamp */
-	protected static HashMap<Integer, Long> writeTimestamps = new HashMap<Integer, Long>();
-
-	protected static int buffersize = 10; // number of buffered versions in
-										// "durations"
+	protected static int numberOfThreads = 5;
 
 	/**
 	 * @param args
@@ -94,19 +67,21 @@ public abstract class AbstractPoller {
 			log.error("Initialization failed", e);
 			System.exit(-1);
 		}
-		System.out.println("Initialization complete, starting polling.");
+		System.out.println("Initialization complete, starting poller threads.");
 		// initialization complete
-		
-		//Create 5 poller with 10ms between each
-		for (int i=0; i<5; i++) {
+
+		// Create pollers with 10ms between each
+		for (int i = 0; i < numberOfThreads; i++) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				
+
 				e.printStackTrace();
 			}
-			String senderIdentifierLocal = senderIdentifier+"_thread_"+i;
-			new AbstractPollerService(this, pollIntervalInMillis, file, filename, buffersize, datacollector, senderIdentifierLocal).start();
+			String senderIdentifierLocal = senderIdentifier + "_thread_" + i;
+			new AbstractThreadingPollerService(this, pollIntervalInMillis,
+					file, filename, buffersize, datacollector,
+					senderIdentifierLocal).start();
 		}
 	}
 }
