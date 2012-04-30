@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 /**
  * responsible for storing data
  * 
@@ -20,9 +22,7 @@ public class StorageEngine {
 
 	private static final StorageEngine instance = new StorageEngine();
 
-	private static LogEngine log = LogEngine.getInstance();
-
-	private boolean debug = true;
+	private static final Logger log = Logger.getLogger(StorageEngine.class);
 
 	/** if true MiniStorage will be an in memory database only */
 	public static boolean doInMemoryStorage = true;
@@ -54,7 +54,7 @@ public class StorageEngine {
 			synchronized (inMemoryDB) {
 				inMemoryDB.put(key, value);
 			}
-			log.log(new Date().getTime(), new String(value));
+			log.info(new Date().getTime() + " - " + new String(value));
 			return;
 		}
 		try {
@@ -62,10 +62,9 @@ public class StorageEngine {
 					+ "/" + key));
 			fos.write(value);
 			fos.close();
-			log.log(new Date().getTime(), new String("stored: " + value));
+
 		} catch (Exception e) {
-			if (debug)
-				debug(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -88,8 +87,7 @@ public class StorageEngine {
 			fis.read(res);
 			return res;
 		} catch (Exception e) {
-			if (debug)
-				debug(e);
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -109,19 +107,6 @@ public class StorageEngine {
 		File f = new File(directory + "/" + key);
 		f.delete();
 
-	}
-
-	void debug(String s) {
-		System.out.println("DEBUG [StorageEngine] " + new Date() + ":" + s);
-	}
-
-	void debug(Exception e) {
-		System.out.println("DEBUG [StorageEngine] " + new Date() + ":");
-		e.printStackTrace();
-	}
-
-	void info(String s) {
-		System.out.println("INFO  [StorageEngine] " + new Date() + ":" + s);
 	}
 
 }
