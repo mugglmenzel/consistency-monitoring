@@ -22,7 +22,7 @@ public abstract class AbstractMonotonicWriteConsistencyChecker {
 	private static final int numberOfKeys = 1000;
 
 	/** if true: issues the writes. if false: reads the values back */
-	private static final boolean isFirstRun = false;
+	private static final boolean isFirstRun = true;
 
 	/** concrete implementation */
 	private static AbstractMonotonicWriteConsistencyChecker checker = new S3MonotonicWriteConsistencyChecker();
