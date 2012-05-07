@@ -42,6 +42,7 @@ public class Coordinator {
 			return false;
 		else {
 			slaves.add(slave);
+			System.out.println("New slaves now: " + slaves);
 			return true;
 		}
 	}
@@ -51,6 +52,7 @@ public class Coordinator {
 			@Override
 			public void run() {
 				for (MiniHost m : slaves) {
+					// System.out.print("Forwarding put to "+m+", result:");
 					Mini2Client.put(m.host, m.port, key, value);
 				}
 			}
@@ -58,14 +60,15 @@ public class Coordinator {
 	}
 
 	public void forwardDelete(final String key) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				for (MiniHost m : slaves) {
+		for (final MiniHost m : slaves) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
 					Mini2Client.delete(m.host, m.port, key);
 				}
-			}
-		}).start();
+
+			}).start();
+		}
 	}
 
 }

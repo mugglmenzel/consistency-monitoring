@@ -1,12 +1,12 @@
 #Fat Jar Configuration File
-#Tue Sep 13 15:30:51 CEST 2011
+#Thu May 03 16:07:08 CEST 2012
 onejar.license.required=false
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=false
 jarname=MonitoringStarter.jar
 manifest.mergeall=true
-manifest.mainclass=edu.kit.aifb.eorg.ExtendedStarter
+manifest.mainclass=edu.kit.aifb.eorg.mini2.Starter
 manifest.file=<createnew>
 jarname.isextern=false
 onejar.expand=

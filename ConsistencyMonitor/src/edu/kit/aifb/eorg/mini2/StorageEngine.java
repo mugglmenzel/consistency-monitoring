@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
@@ -27,11 +27,13 @@ public class StorageEngine {
 	/** if true MiniStorage will be an in memory database only */
 	public static boolean doInMemoryStorage = true;
 
-	private final HashMap<String, byte[]> inMemoryDB = new HashMap<String, byte[]>();
+	private final ConcurrentHashMap<String, byte[]> inMemoryDB = new ConcurrentHashMap<String, byte[]>();
 
 	/** output directory for all persisted data */
 	private String directory = ".";
 
+	private Integer counter = 0;
+	
 	/**
 	 * 
 	 * @return the singleton
@@ -51,10 +53,11 @@ public class StorageEngine {
 		if (value == null)
 			return;
 		if (doInMemoryStorage) {
-			synchronized (inMemoryDB) {
-				inMemoryDB.put(key, value);
+			inMemoryDB.put(key, value);
+			synchronized (counter) {
+				log.info(new Date().getTime() + " - version " + counter++);	
 			}
-			log.info(new Date().getTime() + " - " + new String(value));
+			
 			return;
 		}
 		try {
@@ -76,9 +79,7 @@ public class StorageEngine {
 	 */
 	byte[] get(String key) {
 		if (doInMemoryStorage) {
-			synchronized (inMemoryDB) {
-				return inMemoryDB.get(key);
-			}
+			return inMemoryDB.get(key);
 		}
 		try {
 			File f = new File(directory + "/" + key);
@@ -99,9 +100,7 @@ public class StorageEngine {
 	 */
 	void delete(String key) {
 		if (doInMemoryStorage) {
-			synchronized (inMemoryDB) {
-				inMemoryDB.remove(key);
-			}
+			inMemoryDB.remove(key);
 			return;
 		}
 		File f = new File(directory + "/" + key);
