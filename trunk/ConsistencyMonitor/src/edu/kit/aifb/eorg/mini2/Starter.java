@@ -25,7 +25,7 @@ public class Starter {
 	public static void main(String[] args) throws Exception {
 		PropertyConfigurator.configure("log4j.properties");
 		if (args != null
-				&& (args.length == 1 || args[0].equalsIgnoreCase("help"))) {
+				&& (args.length < 1 || args[0].equalsIgnoreCase("help"))) {
 			log.error("Start with own port as parameter");
 			return;
 		}

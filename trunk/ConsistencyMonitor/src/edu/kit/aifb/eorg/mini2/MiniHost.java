@@ -19,7 +19,7 @@ public class MiniHost implements Serializable {
 	public String host;
 	public int port;
 
-	public MiniHost(String host, int prot) {
+	public MiniHost(String host, int port) {
 		this.host = host;
 		this.port = port;
 	}
@@ -45,6 +45,14 @@ public class MiniHost implements Serializable {
 	@Override
 	public int hashCode() {
 		return host.hashCode() + port;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.host + ":" + this.port;
 	}
 
 }

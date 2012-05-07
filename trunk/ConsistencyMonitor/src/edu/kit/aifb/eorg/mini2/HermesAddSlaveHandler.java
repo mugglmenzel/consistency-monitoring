@@ -24,6 +24,7 @@ public class HermesAddSlaveHandler implements IRequestHandler {
 	@Override
 	public Response handleRequest(Request req) {
 		MiniHost m = (MiniHost) req.getItems().get(0);
+		System.out.println("Adding new slave: "+m.host+":"+m.port);
 		boolean res = Coordinator.getInstance().addSlave(m);
 		return new Response("Result from Coordinator:", res);
 	}
