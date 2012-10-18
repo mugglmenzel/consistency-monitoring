@@ -31,8 +31,15 @@ public class ReaderLogAnalyzer {
 	/** For old log files without latencies set to true */
 	private final static boolean useOldFormat = false;
 
+	private final static String pathPrefix ="c:/temp/";
+	
 	/** list of log files */
-	private final static String[] logfiles = { /*
+	private final static String[] logfiles = { 
+		pathPrefix+"1a.csv", pathPrefix+"2a.csv",pathPrefix+"3a.csv", pathPrefix+"4a.csv",
+		pathPrefix+"5b.csv", pathPrefix+"6b.csv",pathPrefix+"7b.csv", pathPrefix+"8b.csv",
+		pathPrefix+"9c.csv", pathPrefix+"10c.csv",pathPrefix+"11c.csv", pathPrefix+"12c.csv"
+		
+		/*
 												 * "c:/temp/mon01.csv",
 												 * "c:/temp/mon02.csv",
 												 * "c:/temp/mon03.csv",
@@ -46,10 +53,10 @@ public class ReaderLogAnalyzer {
 												 * "c:/temp/mon11.csv",
 												 * "c:/temp/mon12.csv"
 												 */
-	"c:/temp/mon1.csv", "c:/temp/mon2.csv", "c:/temp/mon3.csv",
+	/*"c:/temp/mon1.csv", "c:/temp/mon2.csv", "c:/temp/mon3.csv",
 			"c:/temp/mon4.csv", "c:/temp/mon5.csv", "c:/temp/mon6.csv",
 			"c:/temp/mon7.csv", "c:/temp/mon8.csv", "c:/temp/mon9.csv",
-			"c:/temp/mon10.csv", "c:/temp/mon11.csv", "c:/temp/mon12.csv"
+			"c:/temp/mon10.csv", "c:/temp/mon11.csv", "c:/temp/mon12.csv"*/
 
 	/*
 	 * "c:/temp/mon1b.csv", "c:/temp/mon2b.csv", "c:/temp/mon3b.csv",
