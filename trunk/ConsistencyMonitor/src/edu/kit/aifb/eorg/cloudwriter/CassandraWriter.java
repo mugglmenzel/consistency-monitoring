@@ -4,11 +4,8 @@
 package edu.kit.aifb.eorg.cloudwriter;
 
 import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.cassandra.thrift.ConsistencyLevel;
-
-import edu.kit.aifb.eorg.connectors.CassandraConnector;
+import edu.kit.aifb.eorg.connectors.Cassandra121Connector;
 
 /**
  * @author mugglmenzel
@@ -16,7 +13,9 @@ import edu.kit.aifb.eorg.connectors.CassandraConnector;
  */
 public class CassandraWriter extends AbstractWriter {
 
-	private Map<String, String> values = new HashMap<String, String>();
+	private HashMap<String, String> values = new HashMap<String, String>();
+	
+	private Cassandra121Connector connector;
 	
 	/* (non-Javadoc)
 	 * @see edu.kit.aifb.eorg.cloudwriter.AbstractWriter#writeToCloud(java.lang.String, java.lang.String)
@@ -25,7 +24,7 @@ public class CassandraWriter extends AbstractWriter {
 	public void writeToCloud(String key, String value) {
 		values.clear();
 		values.put("timestamp", value);
-		CassandraConnector.insert("usertable", key, values);
+		System.out.println(connector.insert("usertable", key, values));
 
 	}
 
@@ -34,7 +33,17 @@ public class CassandraWriter extends AbstractWriter {
 	 */
 	@Override
 	public void configure(String[] args) throws Exception {
-		CassandraConnector.init(args[0], ConsistencyLevel.valueOf(args[1]));
+		connector = new Cassandra121Connector();
+		connector.configure(args[0], args[1]);
 	}
 
+	public static void main(String[] args) throws Exception {
+		String hosts = "ec2-54-241-222-33.us-west-1.compute.amazonaws.com";
+		String consistency = "ONE";
+		String [] params = {hosts,consistency};
+		CassandraWriter cw = new CassandraWriter();
+		cw.configure(params);
+		cw.writeToCloud("testkey", "some new value");
+	}
+	
 }

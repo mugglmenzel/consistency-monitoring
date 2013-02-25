@@ -7,14 +7,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
-import org.apache.cassandra.thrift.ConsistencyLevel;
-
-import edu.kit.aifb.eorg.connectors.CassandraConnector;
+import edu.kit.aifb.eorg.connectors.Cassandra121Connector;
 
 /**
  * @author David Bermbach
@@ -24,7 +19,7 @@ import edu.kit.aifb.eorg.connectors.CassandraConnector;
 public class CassandraLoadGenerator {
 
 	private RandomAccessFile outfile;
-	private Set<String> fields = new HashSet<String>();
+	private String field;
 	private int noOfWriteThreads = 0;
 	private int noOfReadThreads = 0;
 	private int sizeForWrites = 0;
@@ -35,6 +30,8 @@ public class CassandraLoadGenerator {
 	private Long readTries = 0L;
 	private Long writeTries = 0L;
 
+	private Cassandra121Connector conn = new Cassandra121Connector();
+	
 	/**
 	 * @param fields
 	 * @param result
@@ -46,9 +43,9 @@ public class CassandraLoadGenerator {
 			throws Exception {
 		this.noOfWriteThreads = noOfWriteThreads;
 		this.noOfReadThreads = noOfReadThreads;
-		fields.add("loadKey");
-		CassandraConnector
-				.init(hosts, ConsistencyLevel.valueOf(consistencyLvl));
+		field="loadKey";
+		conn
+				.configure(hosts, consistencyLvl);
 		this.sizeForWrites = sizeForWrites;
 		outfile = new RandomAccessFile("loadgenerator.csv", "rw");
 		System.out.println("CassandraLoadGenerator fully configured.");
@@ -62,7 +59,7 @@ public class CassandraLoadGenerator {
 		double diff = 0;
 		for (int i = 0; i < noOfWriteThreads; i++) {
 			new Thread(new Runnable() {
-				private Map<String, String> values = new HashMap<String, String>();
+				private HashMap<String, String> values = new HashMap<String, String>();
 
 				@Override
 				public void run() {
@@ -73,8 +70,8 @@ public class CassandraLoadGenerator {
 							byte[] payload = new byte[sizeForWrites];
 							rand.nextBytes(payload);
 							values.put("loadKey", new String(payload));
-							if (CassandraConnector.insert("usertable",
-									"loadKey", values) == CassandraConnector.Error)
+							if (conn.insert("usertable",
+									"loadKey", values) == Cassandra121Connector.Error)
 								throw new RuntimeException(
 										"A write has returned an error.");
 							synchronized (writes) {
@@ -93,7 +90,7 @@ public class CassandraLoadGenerator {
 		}
 		for (int i = 0; i < noOfReadThreads; i++) {
 			new Thread(new Runnable() {
-				private Map<String, String> result = new HashMap<String, String>();
+				private HashMap<String, String> result = new HashMap<String, String>();
 
 				@Override
 				public void run() {
@@ -101,8 +98,8 @@ public class CassandraLoadGenerator {
 					while (true) {
 						try {
 							result.clear();
-							if (CassandraConnector.read("usertable", "loadKey",
-									fields, result) == CassandraConnector.Error)
+							if (conn.read("usertable", "loadKey",
+									field, result) == Cassandra121Connector.Error)
 								throw new RuntimeException(
 										"A read has returned an error.");
 							synchronized (reads) {

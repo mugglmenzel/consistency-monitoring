@@ -3,14 +3,10 @@
  */
 package edu.kit.aifb.eorg.cloudpolling;
 
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.cassandra.thrift.ConsistencyLevel;
-
-import edu.kit.aifb.eorg.connectors.CassandraConnector;
+import edu.kit.aifb.eorg.connectors.Cassandra121Connector;
 
 /**
  * @author mugglmenzel
@@ -18,9 +14,9 @@ import edu.kit.aifb.eorg.connectors.CassandraConnector;
  */
 public class CassandraPoller extends AbstractPoller {
 
-	private Set<String> fields = new HashSet<String>();
-	private Map<String, String> result = new HashMap<String, String>();
-	
+	private String field = "timestamp";
+	private HashMap<String, String> result = new HashMap<String, String>();
+	private Cassandra121Connector connector;
 	
 	
 	/* (non-Javadoc)
@@ -31,14 +27,13 @@ public class CassandraPoller extends AbstractPoller {
 	 */
 	public CassandraPoller() {
 		super();
-		fields.add("timestamp");
+		connector = new Cassandra121Connector();
 	}
 
 	@Override
 	public String readFromCloud(String key) {
 		result.clear();
-		CassandraConnector.read("usertable", key, fields, result);
-		
+		connector.read("usertable", key, field, result);
 		return result.get("timestamp");
 	}
 
@@ -47,7 +42,18 @@ public class CassandraPoller extends AbstractPoller {
 	 */
 	@Override
 	public void configure(String[] args) throws Exception {
-		CassandraConnector.init(args[0], ConsistencyLevel.valueOf(args[1]));
+		connector.configure(args[0], args[1]);
 	}
 
+	public static void main(String[] args) throws Exception {
+		String hosts = "ec2-54-241-222-33.us-west-1.compute.amazonaws.com";
+		String consistency = "ONE";
+		String [] params = {hosts,consistency};
+		CassandraPoller cp = new CassandraPoller();
+		cp.configure(params);
+		Date d = new Date();
+		System.out.println(cp.readFromCloud("testkey"));
+		System.out.println(new Date().getTime()-d.getTime());
+	}
+	
 }
