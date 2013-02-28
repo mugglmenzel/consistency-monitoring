@@ -6,6 +6,7 @@ package edu.kit.aifb.eorg.cloudpolling;
 import java.util.Date;
 import java.util.HashMap;
 
+import edu.kit.aifb.eorg.cloudpolling.multithreaded.AbstractPollerMultiThreaded;
 import edu.kit.aifb.eorg.connectors.Cassandra121Connector;
 
 /**
